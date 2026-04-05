@@ -6,13 +6,16 @@ import { createServer } from "http";
 
 import session from "express-session";
 import passport from "passport";
-import connectMemoryStore from "memorystore";
 import { storage } from "./storage.js";
+import { LibsqlSessionStore } from "./session-store.js";
 
 const app = express();
 const httpServer = createServer(app);
 
-const MemoryStore = connectMemoryStore(session);
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
 
 app.use(
   session({
@@ -25,9 +28,7 @@ app.use(
       httpOnly: true,
       sameSite: "lax",
     },
-    store: new MemoryStore({
-      checkPeriod: 86400000, // prune expired entries every 24h
-    }),
+    store: new LibsqlSessionStore(),
   }),
 );
 
