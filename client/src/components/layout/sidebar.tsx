@@ -29,7 +29,7 @@ export function Sidebar() {
       console.error("Backend logout failed", e);
     }
     setUser(null);
-    localStorage.removeItem("newroots_lang");
+    localStorage.setItem("newroots_lang", "en");
     setLanguage("en");
     auth0Logout({ 
       logoutParams: { 

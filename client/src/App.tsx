@@ -107,10 +107,12 @@ export default function App() {
         language: (dbUser.language as Language) || "en",
         profileComplete: dbUser.profileComplete,
       });
-      // Only apply the DB language if the user hasn't manually picked one
-      // (i.e. localStorage is still the default "en" or unset)
+      // localStorage is the source of truth for language.
+      // Only seed from DB if localStorage has never been set (truly fresh browser/device).
+      // After logout we always write "en" to localStorage, so this only fires
+      // for brand-new devices where the key was never written.
       const storedLang = localStorage.getItem("newroots_lang");
-      if (dbUser.language && (!storedLang || storedLang === "en")) {
+      if (!storedLang && dbUser.language) {
         setLanguage(dbUser.language as Language);
       }
     } catch (err) {
