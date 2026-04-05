@@ -232,14 +232,14 @@ export default function LandingPage() {
 
                  <div className="space-y-3">
                     {[
-                      { label: "Medicaid", sub: "Full family health coverage.", status: "ACTIVE", color: "text-emerald-600 bg-emerald-50 border-emerald-100" },
-                      { label: "SNAP (Food)", sub: "Monthly grocery assistance.", status: "ACTIVE", color: "text-emerald-600 bg-emerald-50 border-emerald-100" },
-                      { label: "Housing Voucher", sub: "Eligibility opens in 30 days.", status: "PENDING", color: "text-slate-400 bg-white border-slate-200 border-dashed" },
+                      { label: t(lang, "landingBenefit1Label"), sub: t(lang, "landingBenefit1Sub"), status: t(lang, "landingStatusActive"), active: true, color: "text-emerald-600 bg-emerald-50 border-emerald-100" },
+                      { label: t(lang, "landingBenefit2Label"), sub: t(lang, "landingBenefit2Sub"), status: t(lang, "landingStatusActive"), active: true, color: "text-emerald-600 bg-emerald-50 border-emerald-100" },
+                      { label: t(lang, "landingBenefit3Label"), sub: t(lang, "landingBenefit3Sub"), status: t(lang, "landingStatusPending"), active: false, color: "text-slate-400 bg-white border-slate-200 border-dashed" },
                     ].map((benefit, idx) => (
-                      <div key={idx} className={`p-5 rounded-2xl border flex items-center justify-between ${benefit.status === "ACTIVE" ? "bg-emerald-50/20 border-emerald-100/50" : "border-slate-100 bg-white border-dashed shadow-sm"}`}>
+                      <div key={idx} className={`p-5 rounded-2xl border flex items-center justify-between ${benefit.active ? "bg-emerald-50/20 border-emerald-100/50" : "border-slate-100 bg-white border-dashed shadow-sm"}`}>
                         <div className="flex items-center gap-4">
-                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${benefit.status === "ACTIVE" ? "bg-emerald-600 border-emerald-600 text-white" : "border-slate-200"}`}>
-                             {benefit.status === "ACTIVE" && <CheckCircle2 className="w-3.5 h-3.5" />}
+                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${benefit.active ? "bg-emerald-600 border-emerald-600 text-white" : "border-slate-200"}`}>
+                             {benefit.active && <CheckCircle2 className="w-3.5 h-3.5" />}
                            </div>
                            <div>
                              <h4 className="font-bold text-sm text-slate-900">{benefit.label}</h4>
