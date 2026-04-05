@@ -3,7 +3,7 @@ import { useHashLocation } from "wouter/use-hash-location";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { apiRequest } from "@/lib/queryClient";
 import type { Language } from "@/lib/translations";
@@ -83,13 +83,13 @@ export default function App() {
   };
   const [largeText, setLargeText] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
-  const [syncing, setSyncing] = useState(false);
+  const syncingRef = useRef(false);
 
   const { isAuthenticated, isLoading, user: auth0User } = useAuth0();
 
   const syncAuth0User = useCallback(async () => {
-    if (!auth0User || syncing || user) return;
-    setSyncing(true);
+    if (!auth0User || syncingRef.current || user) return;
+    syncingRef.current = true;
     try {
       const res = await apiRequest("POST", "/api/auth/sync", {
         auth0Sub: auth0User.sub,
@@ -98,6 +98,7 @@ export default function App() {
         avatarUrl: auth0User.picture || null,
       });
       const dbUser = await res.json();
+      if (!dbUser.id) throw new Error(dbUser.error || "Sync failed");
       setUser({
         id: dbUser.id,
         username: dbUser.displayName || dbUser.username,
@@ -115,15 +116,15 @@ export default function App() {
     } catch (err) {
       console.error("Failed to sync Auth0 user:", err);
     } finally {
-      setSyncing(false);
+      syncingRef.current = false;
     }
-  }, [auth0User, syncing, user]);
+  }, [auth0User, user]);
 
   useEffect(() => {
-    if (isAuthenticated && auth0User && !user && !syncing) {
+    if (isAuthenticated && auth0User && !user) {
       syncAuth0User();
     }
-  }, [isAuthenticated, auth0User, user, syncing, syncAuth0User]);
+  }, [isAuthenticated, auth0User, user, syncAuth0User]);
 
   useEffect(() => {
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
