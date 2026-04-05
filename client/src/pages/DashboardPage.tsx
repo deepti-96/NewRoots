@@ -119,7 +119,7 @@ export default function DashboardPage() {
             <Check className="w-6 h-6 text-emerald-700" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-emerald-900 mb-1">All Caught Up!</h3>
+            <h3 className="text-xl font-bold text-emerald-900 mb-1">{t(lang, "allCaughtUp")}</h3>
             <p className="text-emerald-800/80">{t(lang, "allUrgentDone")}</p>
           </div>
         </div>
@@ -128,7 +128,7 @@ export default function DashboardPage() {
       {/* 3 Metric Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-          <p className="text-slate-500 font-medium text-sm uppercase tracking-wider mb-2">Overall Progress</p>
+          <p className="text-slate-500 font-medium text-sm uppercase tracking-wider mb-2">{t(lang, "overallProgress")}</p>
           <div className="text-3xl font-extrabold text-emerald-700 mb-3">{completionPercent}%</div>
           <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
              <div className="h-full bg-emerald-600 rounded-full transition-all duration-1000" style={{ width: `${completionPercent}%` }} />
@@ -136,14 +136,14 @@ export default function DashboardPage() {
         </div>
         
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-           <p className="text-slate-500 font-medium text-sm uppercase tracking-wider mb-2">Documents Ready</p>
+           <p className="text-slate-500 font-medium text-sm uppercase tracking-wider mb-2">{t(lang, "documentsReady")}</p>
            <div className="text-3xl font-extrabold text-slate-900">
              {profile ? ((() => { try { return JSON.parse(profile.documents || "[]").length; } catch { return 0; }})()) : 0} <span className="text-xl text-slate-400 font-medium">/ 8</span>
            </div>
         </div>
         
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-           <p className="text-slate-500 font-medium text-sm uppercase tracking-wider mb-2">Days in U.S.</p>
+           <p className="text-slate-500 font-medium text-sm uppercase tracking-wider mb-2">{t(lang, "daysInUS")}</p>
            <div className="text-3xl font-extrabold text-slate-900">
              {daysInUS} <span className="text-xl text-slate-400 font-medium">/ 90</span>
            </div>
@@ -231,7 +231,7 @@ export default function DashboardPage() {
                                 <div className="flex flex-wrap gap-2">
                                   {milestone.requiredDocs.map(doc => (
                                     <span key={doc} className="text-xs bg-white border border-slate-200 text-slate-700 rounded-lg px-3 py-1 shadow-sm">
-                                      {doc}
+                                      {t(lang, doc as any)}
                                     </span>
                                   ))}
                                 </div>
