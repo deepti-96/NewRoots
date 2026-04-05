@@ -11,8 +11,10 @@ import OnboardingPage from "@/pages/OnboardingPage";
 import DashboardPage from "@/pages/DashboardPage";
 import BenefitsPage from "@/pages/BenefitsPage";
 import TaxPage from "@/pages/TaxPage";
+import DocumentsPage from "@/pages/DocumentsPage";
 import ProfilePage from "@/pages/ProfilePage";
 import NotFound from "@/pages/not-found";
+import { AppLayout } from "@/components/layout/app-layout";
 
 // App Context
 interface AppUser {
@@ -51,15 +53,18 @@ function AppContent() {
 
   return (
     <Router hook={useHashLocation}>
-      <Switch>
-        <Route path="/" component={LandingPage} />
-        <Route path="/onboarding" component={OnboardingPage} />
-        <Route path="/dashboard" component={DashboardPage} />
-        <Route path="/benefits" component={BenefitsPage} />
-        <Route path="/taxes" component={TaxPage} />
-        <Route path="/profile" component={ProfilePage} />
-        <Route component={NotFound} />
-      </Switch>
+      <AppLayout>
+        <Switch>
+          <Route path="/" component={LandingPage} />
+          <Route path="/onboarding" component={OnboardingPage} />
+          <Route path="/dashboard" component={DashboardPage} />
+          <Route path="/benefits" component={BenefitsPage} />
+          <Route path="/taxes" component={TaxPage} />
+          <Route path="/documents" component={DocumentsPage} />
+          <Route path="/profile" component={ProfilePage} />
+          <Route component={NotFound} />
+        </Switch>
+      </AppLayout>
     </Router>
   );
 }

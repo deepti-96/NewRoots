@@ -1,10 +1,8 @@
 import { useApp } from "@/App";
 import { t } from "@/lib/translations";
-import AppNav from "@/components/AppNav";
-import VoiceButton from "@/components/VoiceButton";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { ExternalLink, ChevronDown, ChevronUp, CheckCircle } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 interface BenefitCard {
   key: string;
@@ -386,122 +384,96 @@ export default function BenefitsPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <AppNav />
-      <main className="max-w-2xl mx-auto px-4 pt-4 pb-8">
-        <div className="mb-5">
-          <h1 className="text-xl font-bold">{t(lang, "benefitsTitle")}</h1>
-          <p className="text-sm text-muted-foreground mt-1">{t(lang, "benefitsSub")}</p>
-          <VoiceButton text={`${t(lang, "benefitsTitle")}. ${t(lang, "benefitsSub")}`} lang={lang} className="mt-1" />
-        </div>
-
-        {/* Disclaimer */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 mb-5">
-          <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
-            Based on your answers, these programs <strong>may be worth checking</strong>. Eligibility depends on your specific situation, state, and immigration status. Always verify with official sources or a human navigator.
+    <div className="max-w-4xl mx-auto w-full p-8 animate-in fade-in duration-500">
+      <div className="mb-6">
+        <h1 className="text-slate-900 text-3xl font-bold mb-2">Benefits & Support Programs</h1>
+        
+        {/* Soft blue informational box */}
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mt-4 shadow-sm">
+          <p className="text-blue-800 font-medium">
+            Based on your answers, these programs may be worth checking. Eligibility depends on your specific situation, state, and immigration status. Always verify with official sources or a human navigator.
           </p>
         </div>
+      </div>
 
-        <div className="space-y-3">
-          {BENEFITS.map(benefit => {
-            const isExpanded = expandedKey === benefit.key;
-            const desc = benefit.description[lang] || benefit.description.en;
-            const elig = benefit.eligibility[lang] || benefit.eligibility.en;
-            const howTo = benefit.howToApply[lang] || benefit.howToApply.en;
+      <div className="space-y-4">
+        {BENEFITS.map(benefit => {
+          const isExpanded = expandedKey === benefit.key;
+          const desc = benefit.description[lang] || benefit.description.en;
+          const elig = benefit.eligibility[lang] || benefit.eligibility.en;
+          const howTo = benefit.howToApply[lang] || benefit.howToApply.en;
 
-            return (
-              <div
-                key={benefit.key}
-                data-testid={`benefit-card-${benefit.key}`}
-                className={`bg-card border rounded-2xl overflow-hidden transition-all ${
-                  benefit.urgency === "urgent" ? "border-orange-200 dark:border-orange-800/50" : "border-border"
-                }`}
+          // Determine badge based on urgency mapping
+          let badgeText = benefit.urgency === "urgent" ? "You may qualify" : "Worth checking";
+          let badgeStyle = benefit.urgency === "urgent" 
+            ? "bg-emerald-50 text-emerald-700 border-none"
+            : "bg-blue-50 text-blue-700 border-none";
+            
+          // If there's an action required or some missing state (mocked logic)
+          if (benefit.key === "ssn_benefit") {
+            badgeText = "Action Required";
+            badgeStyle = "bg-amber-50 text-amber-700 border-none";
+          }
+
+          return (
+            <div
+              key={benefit.key}
+              className={`bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-md cursor-pointer ${isExpanded ? 'ring-2 ring-emerald-600' : ''}`}
+            >
+              <div 
+                className="w-full flex items-center justify-between p-6"
+                onClick={() => setExpandedKey(isExpanded ? null : benefit.key)}
               >
-                <button
-                  onClick={() => setExpandedKey(isExpanded ? null : benefit.key)}
-                  className="w-full text-left p-4"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{benefit.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-sm">{t(lang, benefit.titleKey as any)}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          benefit.urgency === "urgent"
-                            ? "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300"
-                            : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
-                        }`}>
-                          {benefit.urgency === "urgent" ? t(lang, "youMayQualify") : t(lang, "checkFirst")}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 truncate">{desc}</p>
+                <div className="flex items-center gap-6">
+                  {/* Monochromatic Soft Icon Compartment */}
+                  <div className="w-16 h-16 rounded-xl bg-slate-50 border border-slate-100 flex justify-center items-center flex-shrink-0 text-3xl opacity-80 grayscale">
+                    {benefit.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-1">{t(lang, benefit.titleKey as any)}</h3>
+                    <p className="text-slate-500 text-sm line-clamp-1">{desc}</p>
+                  </div>
+                </div>
+                
+                {/* Status Badge */}
+                <span className={`px-4 py-2 rounded-full font-bold text-sm tracking-wide whitespace-nowrap flex-shrink-0 text-center ${badgeStyle}`}>
+                  {badgeText}
+                </span>
+              </div>
+
+              {isExpanded && (
+                <div className="px-6 pb-6 pt-2 border-t border-slate-100 space-y-6 animate-in slide-in-from-top-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                      <h4 className="text-slate-400 font-bold uppercase tracking-wider text-xs mb-2">What it is</h4>
+                      <p className="text-slate-700 leading-relaxed">{desc}</p>
                     </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <VoiceButton text={`${t(lang, benefit.titleKey as any)}. ${desc}`} lang={lang} />
-                      {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+
+                    <div>
+                      <h4 className="text-slate-400 font-bold uppercase tracking-wider text-xs mb-2">Who qualifies</h4>
+                      <p className="text-slate-700 leading-relaxed">{elig}</p>
                     </div>
                   </div>
-                </button>
 
-                {isExpanded && (
-                  <div className="px-4 pb-4 border-t border-border/50 pt-3 space-y-4">
-                    <div>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">What it is</p>
-                      <p className="text-sm">{desc}</p>
-                    </div>
-
-                    <div>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Who qualifies</p>
-                      <p className="text-sm">{elig}</p>
-                    </div>
-
-                    <div>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">How to apply</p>
-                      <p className="text-sm">{howTo}</p>
-                    </div>
-
-                    {benefit.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {benefit.tags.map(tag => (
-                          <span key={tag} className="flex items-center gap-1 text-xs bg-muted rounded-full px-2.5 py-1">
-                            <CheckCircle className="w-3 h-3 text-green-500" />
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
+                  <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 mt-2">
+                    <h4 className="text-slate-400 font-bold uppercase tracking-wider text-xs mb-2">How to apply</h4>
+                    <p className="text-slate-700 mb-4">{howTo}</p>
+                    
                     <a
                       href={benefit.officialLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
+                      className="inline-flex items-center gap-2 text-white bg-slate-900 border border-slate-800 rounded-xl px-5 py-3 hover:bg-slate-800 hover:shadow-md transition-all font-medium text-sm"
                     >
-                      <ExternalLink className="w-4 h-4" />
-                      {t(lang, "officialLink")} ↗
+                      Visit Official Resource <ExternalLink className="w-4 h-4 ml-1 opacity-70" />
                     </a>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Benefits.gov link */}
-        <div className="mt-6 bg-primary/5 border border-primary/20 rounded-2xl p-4 text-center">
-          <p className="text-sm font-medium mb-1">Check more benefits</p>
-          <p className="text-xs text-muted-foreground mb-3">Benefits.gov supports 1,000+ state and federal programs</p>
-          <a
-            href="https://www.benefits.gov"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-primary border border-primary rounded-xl px-4 py-2 hover:bg-primary/10 transition-colors"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-            benefits.gov
-          </a>
-        </div>
-      </main>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
