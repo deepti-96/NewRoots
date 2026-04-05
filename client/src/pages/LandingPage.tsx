@@ -84,6 +84,7 @@ export default function LandingPage() {
           {/* Language picker */}
           <div className="relative">
             <button
+              data-testid="btn-lang-select"
               onClick={() => setLangOpen(!langOpen)}
               className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-semibold text-sm transition-all px-4 py-2 rounded-xl hover:bg-slate-50 active:scale-95"
             >
@@ -95,6 +96,7 @@ export default function LandingPage() {
                 {LANGUAGES.map(l => (
                   <button
                     key={l.code}
+                    data-testid={`lang-option-${l.code}`}
                     onClick={() => { setLanguage(l.code as Language); setLangOpen(false); }}
                     className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-all text-left ${lang === l.code ? "bg-emerald-50 text-emerald-800 font-bold" : "hover:bg-slate-50 text-slate-600"}`}
                   >
@@ -107,17 +109,19 @@ export default function LandingPage() {
           </div>
 
           <Button
+            data-testid="btn-sign-in"
             variant="ghost"
             onClick={handleSignIn}
             className="text-slate-900 font-bold px-6 py-3 rounded-xl h-auto border border-slate-200 hover:border-slate-300 hover:bg-white shadow-sm active:scale-95 transition-all"
           >
-            Sign In
+            {t(lang, "signIn")}
           </Button>
           <Button
+            data-testid="btn-get-started"
             onClick={handleGetStarted}
             className="bg-emerald-800 text-white hover:bg-emerald-900 font-bold px-8 py-3 rounded-xl h-auto shadow-xl shadow-emerald-900/10 active:scale-95 transition-all"
           >
-            Get Started
+            {t(lang, "getStarted")}
           </Button>
         </div>
       </nav>
@@ -128,23 +132,33 @@ export default function LandingPage() {
         <div className="lg:col-span-6 space-y-10">
           <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 rounded-full px-5 py-2 text-sm font-bold border border-emerald-100/50 shadow-sm">
             <Shield className="w-4 h-4" />
-            TRUSTED BY 10,000+ FAMILIES
+            {t(lang, "trustedBadge")}
           </div>
 
           <h1 className="text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight text-slate-900">
-            Your algorithmic caseworker for arriving in the U.S.
+            {t(lang, "heroHeadline")}
           </h1>
 
           <p className="text-xl text-slate-500 leading-relaxed max-w-lg">
-            NewRoots cuts through bureaucratic deadlock. Track your first 90 days, manage essential documents, and unlock health and food benefits without confusion.
+            {t(lang, "heroSub")}
           </p>
+
+          {/* Voice intro button */}
+          <button
+            data-testid="btn-voice-intro"
+            onClick={playIntro}
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 text-sm border border-slate-200 rounded-full px-4 py-2 hover:bg-slate-50 transition-colors"
+          >
+            {introPlaying ? <VolumeX className="w-4 h-4 animate-pulse" /> : <Volume2 className="w-4 h-4" />}
+            {t(lang, "speakToRead")}
+          </button>
 
           <Button
             onClick={handleGetStarted}
             size="lg"
             className="bg-emerald-800 hover:bg-emerald-900 text-white font-black px-10 py-5 rounded-2xl h-auto text-xl shadow-2xl shadow-emerald-900/20 active:scale-95 transition-all flex items-center gap-3"
           >
-            Start Your Journey
+            {t(lang, "getStarted")}
             <ArrowRight className="w-6 h-6" />
           </Button>
         </div>
@@ -157,21 +171,21 @@ export default function LandingPage() {
              {/* Header */}
              <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900">Family Setup Map</h3>
-                  <p className="text-slate-500 font-medium">Clear your blockers step-by-step.</p>
+                  <h3 className="text-2xl font-black text-slate-900">{t(lang, "heroCardTitle")}</h3>
+                  <p className="text-slate-500 font-medium">{t(lang, "heroCardSub")}</p>
                 </div>
                 <div className="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-full text-xs font-bold ring-1 ring-emerald-100">
-                  50% READY
+                  {t(lang, "heroCardReady")}
                 </div>
              </div>
 
              {/* Checklist Items */}
              <div className="space-y-4">
                 {[
-                  { label: "Download Your I-94 Record", sub: "Required for state IDs and work auth.", done: true },
-                  { label: "Apply for a Social Security Number", sub: "Essential for employment and taxes.", done: true },
-                  { label: "Register for Medicaid", sub: "Health coverage for your family.", done: false },
-                  { label: "Apply for SNAP (Food Stamps)", sub: "Monthly food assistance.", done: false },
+                  { labelKey: "heroCard_item1_label" as const, subKey: "heroCard_item1_sub" as const, done: true },
+                  { labelKey: "heroCard_item2_label" as const, subKey: "heroCard_item2_sub" as const, done: true },
+                  { labelKey: "heroCard_item3_label" as const, subKey: "heroCard_item3_sub" as const, done: false },
+                  { labelKey: "heroCard_item4_label" as const, subKey: "heroCard_item4_sub" as const, done: false },
                 ].map((item, idx) => (
                   <div key={idx} className={`p-5 rounded-2xl border transition-all duration-300 ${item.done ? "bg-slate-50/50 border-slate-100 opacity-80" : "bg-white border-slate-200 shadow-sm"}`}>
                     <div className="flex items-start gap-4">
@@ -179,8 +193,8 @@ export default function LandingPage() {
                         {item.done && <CheckCircle2 className="w-4 h-4" />}
                       </div>
                       <div>
-                        <h4 className={`font-bold text-sm leading-tight ${item.done ? "text-slate-600" : "text-slate-900"}`}>{item.label}</h4>
-                        <p className="text-xs text-slate-400 mt-1 font-medium">{item.sub}</p>
+                        <h4 className={`font-bold text-sm leading-tight ${item.done ? "text-slate-600" : "text-slate-900"}`}>{t(lang, item.labelKey)}</h4>
+                        <p className="text-xs text-slate-400 mt-1 font-medium">{t(lang, item.subKey)}</p>
                       </div>
                     </div>
                   </div>
@@ -206,7 +220,7 @@ export default function LandingPage() {
                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 transition-transform group-hover:scale-110">
                      <Heart className="w-5 h-5 fill-emerald-600" />
                    </div>
-                   <h3 className="text-xl font-black text-slate-900 tracking-tight">My Benefits</h3>
+                   <h3 className="text-xl font-black text-slate-900 tracking-tight">{t(lang, "benefits")}</h3>
                  </div>
 
                  <div className="space-y-3">
@@ -238,30 +252,30 @@ export default function LandingPage() {
            <div className="lg:col-span-7 space-y-8 order-1 lg:order-2">
               <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 rounded-full px-5 py-2 text-xs font-black tracking-widest uppercase border border-emerald-100">
                 <HeartHandshake className="w-4 h-4" />
-                BUILT WITH COMPASSION
+                {t(lang, "builtWithCompassion")}
               </div>
               
               <h2 className="text-5xl font-black text-slate-900 tracking-tight leading-[1.1]">
-                What NewRoots does for you
+                {t(lang, "featuresTitle")}
               </h2>
 
               <p className="text-xl text-slate-500 leading-relaxed">
-                A guided caseworker in your pocket. Not a search engine. We provide clarity when you need it most.
+                {t(lang, "featuresSub")}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6">
                 {[
-                  { icon: Clock, title: "First 90 Days Plan", sub: "Step-by-step milestones tailored to your family.", color: "text-emerald-600", bg: "bg-emerald-50" },
-                  { icon: Globe, title: "10 Languages", sub: "Voice & text in your native language.", color: "text-teal-600", bg: "bg-teal-50" },
-                  { icon: Heart, title: "Benefits Finder", sub: "Food, health, housing, and employment programs.", color: "text-rose-600", bg: "bg-rose-50" },
-                  { icon: Shield, title: "Tax Guidance", sub: "Reminders and free filing help near you.", color: "text-blue-600", bg: "bg-blue-50" },
+                  { icon: Clock, titleKey: "feature1Title" as const, subKey: "feature1Sub" as const, color: "text-emerald-600", bg: "bg-emerald-50" },
+                  { icon: Globe, titleKey: "feature2Title" as const, subKey: "feature2Sub" as const, color: "text-teal-600", bg: "bg-teal-50" },
+                  { icon: Heart, titleKey: "feature3Title" as const, subKey: "feature3Sub" as const, color: "text-rose-600", bg: "bg-rose-50" },
+                  { icon: Shield, titleKey: "feature4Title" as const, subKey: "feature4Sub" as const, color: "text-blue-600", bg: "bg-blue-50" },
                 ].map((item, idx) => (
                   <div key={idx} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all group">
                     <div className={`w-12 h-12 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-transform`}>
                       <item.icon className="w-6 h-6" />
                     </div>
-                    <h3 className="font-bold text-slate-900 text-lg mb-2">{item.title}</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed font-medium">{item.sub}</p>
+                    <h3 className="font-bold text-slate-900 text-lg mb-2">{t(lang, item.titleKey)}</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed font-medium">{t(lang, item.subKey)}</p>
                   </div>
                 ))}
               </div>
@@ -273,13 +287,13 @@ export default function LandingPage() {
       <section className="max-w-7xl mx-auto px-6 lg:px-12 py-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
            
-           {/* Left Content: Timeline */}
+           {/* Left Content: Timeline Header */}
            <div className="lg:col-span-12 mb-12">
               <h2 className="text-5xl font-black text-slate-900 tracking-tight mb-4">
-                Your first 90 days, step by step
+                {t(lang, "journeyTitle")}
               </h2>
               <p className="text-xl text-slate-500 leading-relaxed max-w-2xl">
-                We help you know what to do first, what documents you need, and where to get help. Clear blockers sequentially and build your foundation.
+                {t(lang, "journeySub")}
               </p>
            </div>
 
@@ -290,10 +304,10 @@ export default function LandingPage() {
 
               <div className="space-y-12 w-full">
                 {[
-                  { week: "Week 1", title: "Immediate Setup", items: ["Get phone/SIM card", "Get mailing address", "Download I-94 record"] },
-                  { week: "Week 2", title: "Identity & Finance", items: ["Apply for SSN", "Open bank account", "Get health insurance"] },
-                  { week: "Week 3-4", title: "Benefits & School", items: ["Apply for SNAP food benefits", "Enroll children in school", "Find WIC if applicable"] },
-                  { week: "Month 2-3", title: "Long-term Stability", items: ["Get state ID / Driver's license", "Apply for ITIN if needed", "Prepare for tax filing"] },
+                  { weekKey: "journeyWeek1" as const, titleKey: "timeline_title1" as const, itemKeys: ["journeyItem_w1_1", "journeyItem_w1_2", "journeyItem_w1_3"] as const },
+                  { weekKey: "journeyWeek2" as const, titleKey: "timeline_title2" as const, itemKeys: ["journeyItem_w2_1", "journeyItem_w2_2", "journeyItem_w2_3"] as const },
+                  { weekKey: "journeyWeek34" as const, titleKey: "timeline_title3" as const, itemKeys: ["journeyItem_w34_1", "journeyItem_w34_2", "journeyItem_w34_3"] as const },
+                  { weekKey: "journeyMonth23" as const, titleKey: "timeline_title4" as const, itemKeys: ["journeyItem_m23_1", "journeyItem_m23_2", "journeyItem_m23_3"] as const },
                 ].map((item, idx) => (
                   <div key={idx} className="flex gap-10 items-start relative group">
                     {/* Bullet */}
@@ -301,16 +315,16 @@ export default function LandingPage() {
                     
                     <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all flex-1">
                       <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-block mb-4 border border-emerald-100">
-                        {item.week}
+                        {t(lang, item.weekKey)}
                       </div>
-                      <h4 className="text-xl font-bold text-slate-900 mb-6">{item.title}</h4>
+                      <h4 className="text-xl font-bold text-slate-900 mb-6">{t(lang, item.titleKey)}</h4>
                       <div className="space-y-3">
-                         {item.items.map((sub, i) => (
-                           <div key={i} className="flex items-center gap-3 text-slate-600 font-medium">
+                         {item.itemKeys.map((key) => (
+                           <div key={key} className="flex items-center gap-3 text-slate-600 font-medium">
                              <div className="w-5 h-5 rounded-full border border-slate-200 flex items-center justify-center flex-shrink-0">
                                <CheckCircle2 className="w-3.5 h-3.5 text-slate-200" />
                              </div>
-                             <span className="text-sm">{sub}</span>
+                             <span className="text-sm">{t(lang, key)}</span>
                            </div>
                          ))}
                       </div>
@@ -326,16 +340,16 @@ export default function LandingPage() {
               
               <div className="bg-white rounded-[2rem] p-10 shadow-[0_32px_120px_-24px_rgba(0,0,0,0.1)] border border-slate-50 relative">
                  <div className="flex items-center justify-between mb-10">
-                   <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">ACTION ITEMS</h3>
-                   <span className="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest">5/7 Complete</span>
+                   <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t(lang, "actionItemsTitle")}</h3>
+                   <span className="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest">{t(lang, "actionItemsComplete")}</span>
                  </div>
 
                  <div className="space-y-6">
                     {[
-                      { label: "Identity Verification", time: "Completed yesterday", done: true },
-                      { label: "Link Primary Bank", time: "Completed 4:45 PM", done: true },
-                      { label: "Set Up Automated Savings", time: "Pending your review.", active: true },
-                      { label: "Security Settings", time: "Locked", faded: true },
+                      { labelKey: "action_item1_label" as const, timeKey: "action_item1_time" as const, done: true },
+                      { labelKey: "action_item2_label" as const, timeKey: "action_item2_time" as const, done: true },
+                      { labelKey: "action_item3_label" as const, timeKey: "action_item3_time" as const, active: true },
+                      { labelKey: "action_item4_label" as const, timeKey: "action_item4_time" as const, faded: true },
                     ].map((item, idx) => (
                       <div key={idx} className={`relative flex items-start gap-4 ${item.faded ? "opacity-30" : "opacity-100"}`}>
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center mt-1 flex-shrink-0 ${item.done ? "bg-emerald-600 text-white" : item.active ? "ring-2 ring-emerald-600 ring-offset-2" : "border-2 border-slate-200"}`}>
@@ -343,11 +357,11 @@ export default function LandingPage() {
                            {item.active && <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>}
                         </div>
                         <div className="flex-1">
-                           <h4 className="font-bold text-slate-900 leading-tight">{item.label}</h4>
-                           <p className="text-xs text-slate-400 font-medium mt-1 mb-2">{item.time}</p>
+                           <h4 className="font-bold text-slate-900 leading-tight">{t(lang, item.labelKey)}</h4>
+                           <p className="text-xs text-slate-400 font-medium mt-1 mb-2">{t(lang, item.timeKey)}</p>
                            {item.active && (
                              <button className="text-xs font-black text-emerald-700 hover:text-emerald-800 transition-colors flex items-center gap-1 group/btn">
-                               Review Settings <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                               {t(lang, "action_item3_cta")} <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
                              </button>
                            )}
                         </div>
@@ -371,11 +385,11 @@ export default function LandingPage() {
           </div>
 
           <h2 className="text-3xl sm:text-4xl font-black mb-6 tracking-tight text-white">
-            Ready to start your journey?
+            {t(lang, "footerCtaTitle")}
           </h2>
 
           <p className="text-lg text-emerald-100/80 mb-12 max-w-sm mx-auto font-medium leading-relaxed">
-            Free to use. Available in 10 languages. No documents required to sign up.
+            {t(lang, "footerCtaSub")}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
@@ -384,13 +398,13 @@ export default function LandingPage() {
               onClick={handleGetStarted}
               className="bg-white text-emerald-900 hover:bg-emerald-50 font-black px-10 py-6 rounded-2xl h-auto text-lg shadow-2xl transition-all active:scale-95"
             >
-              Get Started — It's Free
+              {t(lang, "getStarted")}
             </Button>
             <Button
               variant="outline"
               className="bg-transparent border-emerald-700 text-white hover:bg-emerald-800 font-bold px-10 py-6 rounded-2xl h-auto text-lg transition-all active:scale-95"
             >
-              Contact Support
+              {t(lang, "contactSupport")}
             </Button>
           </div>
         </div>
