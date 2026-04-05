@@ -61,8 +61,45 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   // Update user profile
   app.patch("/api/user/:id", async (req, res) => {
-    const user = await storage.updateUserProfile(Number(req.params.id), req.body);
+    const userId = Number(req.params.id);
+    const user = await storage.updateUserProfile(userId, req.body);
     if (!user) return res.status(404).json({ error: "Not found" });
+
+    // Sync documents with milestones if documents were updated
+    if (req.body.documents) {
+      try {
+        const docs: string[] = JSON.parse(req.body.documents);
+        
+        // Define mapping: Document Name -> Milestone Key
+        const docToMilestone: Record<string, string> = {
+          "I-94 Form": "i94",
+          "Passport": "identity_verification", // if we add this milestone
+          "Lease Agreement": "housing_lease",
+          "Utility Bill": "address",
+          "Social Security Number": "ssn",
+          "Immunization records": "health_screening",
+          "Medical Records": "health_screening",
+          "Employment Authorization (EAD)": "ead_work_authorization",
+          "Bank Statement": "bank_account",
+        };
+
+        for (const docName of docs) {
+          const milestoneKey = docToMilestone[docName];
+          if (milestoneKey) {
+            await storage.upsertMilestone({
+              userId,
+              key: milestoneKey,
+              completed: true,
+              completedAt: new Date().toISOString(),
+              notes: `Auto-completed via document upload: ${docName}`
+            });
+          }
+        }
+      } catch (e) {
+        console.error("Failed to sync milestones with documents:", e);
+      }
+    }
+
     res.json(user);
   });
 

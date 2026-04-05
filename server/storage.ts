@@ -47,8 +47,18 @@ export const storage = {
         avatarUrl: avatarUrl ?? existing.avatarUrl,
       }).where(eq(users.id, existing.id)).returning())[0];
     }
+
+    // Generate a unique username
+    let baseUsername = displayName || email?.split("@")[0] || auth0Sub;
+    let username = baseUsername;
+    let counter = 1;
+    
+    while (await this.getUserByUsername(username)) {
+      username = `${baseUsername}_${counter++}`;
+    }
+
     return (await db.insert(users).values({
-      username: displayName || email || auth0Sub,
+      username,
       password: "",
       auth0Sub,
       email,
