@@ -1,39 +1,38 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useAuth0 } from "@auth0/auth0-react";
 import { useApp } from "@/App";
 import { t, LANGUAGES, type Language } from "@/lib/translations";
 import { speakText } from "@/lib/voiceUtils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { Globe, ChevronRight, Volume2, VolumeX, Shield, Clock, Heart } from "lucide-react";
+import { Globe, ChevronRight, Volume2, VolumeX, Shield, Clock, Heart, Loader2 } from "lucide-react";
 
 export default function LandingPage() {
   const [, navigate] = useLocation();
-  const { setUser, language, setLanguage } = useApp();
-  const { toast } = useToast();
+  const { user, language, setLanguage } = useApp();
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
 
-  const [mode, setMode] = useState<"landing" | "login" | "register">("landing");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [introPlaying, setIntroPlaying] = useState(false);
   const introAbortRef = useRef<AbortController | null>(null);
 
   const lang = language;
 
+  // Auto-redirect authenticated users
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (!user.profileComplete) navigate("/onboarding");
+      else navigate("/dashboard");
+    }
+  }, [isAuthenticated, user, navigate]);
+
   function playIntro() {
-    // If already playing or loading, stop and reset
     if (introPlaying) {
       introAbortRef.current?.abort();
       introAbortRef.current = null;
       setIntroPlaying(false);
       return;
     }
-    // Abort any in-flight previous request before starting a new one
     introAbortRef.current?.abort();
     const controller = new AbortController();
     introAbortRef.current = controller;
@@ -43,25 +42,12 @@ export default function LandingPage() {
     });
   }
 
-  async function handleAuth(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const endpoint = mode === "register" ? "/api/auth/register" : "/api/auth/login";
-      const data = await apiRequest("POST", endpoint, { username, password });
-      const userData = await data.json();
-      if (userData.error) {
-        toast({ title: "Error", description: userData.error, variant: "destructive" });
-        return;
-      }
-      setUser({ ...userData, language: lang });
-      if (!userData.profileComplete) navigate("/onboarding");
-      else navigate("/dashboard");
-    } catch (err: any) {
-      toast({ title: "Error", description: "Something went wrong. Please try again.", variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
+  function handleGetStarted() {
+    loginWithRedirect({ authorizationParams: { screen_hint: "signup" } });
+  }
+
+  function handleSignIn() {
+    loginWithRedirect();
   }
 
   const features = [
@@ -73,81 +59,13 @@ export default function LandingPage() {
 
   const selectedLang = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];
 
-  if (mode !== "landing") {
+  // Show spinner while syncing after Auth0 redirect
+  if (isAuthenticated && !user) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-sm">
-          {/* Logo */}
-          <div className="flex items-center justify-center gap-2 mb-8">
-            <svg aria-label="NewRoots" viewBox="0 0 40 40" fill="none" className="w-10 h-10">
-              <rect width="40" height="40" rx="10" fill="hsl(var(--primary))"/>
-              <path d="M10 20c0-5.5 4.5-10 10-10s10 4.5 10 10" stroke="white" strokeWidth="3" strokeLinecap="round"/>
-              <circle cx="20" cy="26" r="4" fill="white"/>
-            </svg>
-            <span className="font-bold text-xl">NewRoots</span>
-          </div>
-
-          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg font-semibold mb-1">
-              {mode === "login" ? t(lang, "signIn") : t(lang, "createAccount")}
-            </h2>
-            <p className="text-sm text-muted-foreground mb-5">
-              {mode === "login" ? t(lang, "alreadyHaveAccount") : t(lang, "dontHaveAccount")}
-            </p>
-
-            <form onSubmit={handleAuth} className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="username">{t(lang, "username")}</Label>
-                <Input
-                  id="username"
-                  data-testid="input-username"
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
-                  placeholder={t(lang, "username")}
-                  required
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="password">{t(lang, "password")}</Label>
-                <Input
-                  id="password"
-                  data-testid="input-password"
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder={t(lang, "password")}
-                  required
-                />
-              </div>
-              <Button
-                data-testid="btn-auth-submit"
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? "..." : (mode === "login" ? t(lang, "signIn") : t(lang, "createAccount"))}
-              </Button>
-            </form>
-
-            <div className="mt-4 text-center text-sm">
-              {mode === "login" ? (
-                <button onClick={() => setMode("register")} className="text-primary hover:underline">
-                  {t(lang, "dontHaveAccount")} {t(lang, "createAccount")}
-                </button>
-              ) : (
-                <button onClick={() => setMode("login")} className="text-primary hover:underline">
-                  {t(lang, "alreadyHaveAccount")} {t(lang, "signIn")}
-                </button>
-              )}
-            </div>
-          </div>
-
-          <button
-            onClick={() => setMode("landing")}
-            className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground"
-          >
-            ← {t(lang, "back")}
-          </button>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Setting up your account...</p>
         </div>
       </div>
     );
@@ -155,7 +73,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Language selector strip */}
+      {/* Language selector */}
       <div className="relative">
         <button
           data-testid="btn-lang-select"
@@ -184,14 +102,12 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="hero-gradient text-white min-h-[90vh] flex flex-col items-center justify-center px-5 py-16 relative overflow-hidden">
-        {/* Background elements — subtle radial glow only */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-white/5 blur-3xl" />
           <div className="absolute top-0 left-0 w-64 h-64 rounded-full bg-white/5 blur-3xl" />
         </div>
 
         <div className="relative z-10 text-center max-w-lg mx-auto">
-          {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-8">
             <svg aria-label="NewRoots" viewBox="0 0 48 48" fill="none" className="w-12 h-12">
               <rect width="48" height="48" rx="12" fill="white" fillOpacity="0.15"/>
@@ -208,29 +124,24 @@ export default function LandingPage() {
             {t(lang, "heroSub")}
           </p>
 
-          {/* Day counter badge */}
           <div className="inline-flex items-center gap-2 day-badge rounded-full px-4 py-1.5 text-sm font-semibold mb-8">
             <Clock className="w-4 h-4" />
             First 90 Days — Day by Day
           </div>
 
-          {/* Voice intro button */}
           <button
             data-testid="btn-voice-intro"
             onClick={playIntro}
             className="flex items-center gap-2 mx-auto mb-6 text-white/80 hover:text-white text-sm border border-white/30 rounded-full px-4 py-2 hover:bg-white/10 transition-colors"
           >
-            {introPlaying === true
-              ? <VolumeX className="w-4 h-4 animate-pulse" />
-              : <Volume2 className="w-4 h-4" />}
+            {introPlaying ? <VolumeX className="w-4 h-4 animate-pulse" /> : <Volume2 className="w-4 h-4" />}
             {t(lang, "speakToRead")}
           </button>
 
-          {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center w-full max-w-xs sm:max-w-sm mx-auto">
             <Button
               data-testid="btn-get-started"
-              onClick={() => setMode("register")}
+              onClick={handleGetStarted}
               className="bg-white text-primary hover:bg-white/90 font-semibold px-6 py-5 text-base rounded-xl"
             >
               {t(lang, "getStarted")}
@@ -238,7 +149,7 @@ export default function LandingPage() {
             </Button>
             <Button
               data-testid="btn-sign-in"
-              onClick={() => setMode("login")}
+              onClick={handleSignIn}
               variant="outline"
               className="border-white/40 text-white hover:bg-white/10 px-6 py-5 text-base rounded-xl"
             >
@@ -252,7 +163,6 @@ export default function LandingPage() {
       <section className="max-w-lg mx-auto px-5 py-12">
         <h2 className="text-xl font-bold text-center mb-2">What NewRoots does for you</h2>
         <p className="text-sm text-muted-foreground text-center mb-8">A guided caseworker in your pocket. Not a search engine.</p>
-
         <div className="grid grid-cols-2 gap-3">
           {features.map(({ icon: Icon, title, sub }) => (
             <div key={title} className="bg-card border border-border rounded-2xl p-4 card-lift">
@@ -271,7 +181,6 @@ export default function LandingPage() {
         <div className="max-w-lg mx-auto">
           <h2 className="text-xl font-bold text-center mb-2">Your first 90 days, step by step</h2>
           <p className="text-sm text-muted-foreground text-center mb-6">We help you know what to do first, what documents you need, and where to get help.</p>
-
           <div className="space-y-3">
             {[
               { week: "Week 1", items: ["Get phone/SIM card", "Get mailing address", "Download I-94 record"] },
@@ -304,7 +213,7 @@ export default function LandingPage() {
           <p className="text-white/80 text-sm mb-6">Free to use. Available in 10 languages. No documents required to sign up.</p>
           <Button
             data-testid="btn-start-footer"
-            onClick={() => setMode("register")}
+            onClick={handleGetStarted}
             className="bg-white text-primary hover:bg-white/90 font-semibold px-8 py-5 text-base rounded-xl"
           >
             {t(lang, "getStarted")}
