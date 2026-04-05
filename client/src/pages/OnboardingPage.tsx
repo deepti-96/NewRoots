@@ -251,9 +251,9 @@ export default function OnboardingPage() {
           </div>
         ))}
 
-        {/* State Dropdown - Floating Label Style */}
-        <div className="relative pt-2">
-          <label className="absolute -top-1 left-3 bg-white px-1 text-xs font-bold text-emerald-800 z-10">{t(lang, "whichState")}</label>
+        {/* State Dropdown */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold text-emerald-800">{t(lang, "whichState")}</label>
           <select
             data-testid="select-state"
             value={state}
@@ -264,9 +264,9 @@ export default function OnboardingPage() {
           </select>
         </div>
 
-        {/* Arrival Date - Floating Label Style */}
-        <div className="relative pt-6">
-          <label className="absolute top-0 left-1 px-1 text-xs font-bold text-emerald-800 z-10">{t(lang, "arrivalDateLabel")}</label>
+        {/* Arrival Date */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold text-emerald-800">{t(lang, "arrivalDateLabel")}</label>
         <div className="grid grid-cols-3 gap-3">
           <Select
             value={String(selectedMonth)}
