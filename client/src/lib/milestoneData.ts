@@ -721,7 +721,7 @@ export const MILESTONES: MilestoneItem[] = [
       hi: { title: "इमिग्रेशन कानूनी सहायता से जुड़ें", description: "मुफ़्त या कम लागत का इमिग्रेशन वकील खोजें।" },
       ar: { title: "التواصل مع المساعدة القانونية للهجرة", description: "ابحث عن محامي هجرة مجاني أو منخفض التكلفة." },
     
-      fr: { title: "Se Connecter avec l'Aide Juridique en Immigration", description: "Les avocats en droit de l'immigration gratuits ou à faible coût peuvent vous aider avec le renouvellement de statut, l'asile et la citoyenneté.", tips: ["Recherchez des organisations accréditées EOIR", "Méfiez-vous des "notarios" — ce ne sont pas des avocats", "Les services d'aide juridique sont souvent gratuits pour les réfugiés"] },
+      fr: { title: "Se Connecter avec l'Aide Juridique en Immigration", description: "Les avocats en droit de l'immigration gratuits ou à faible coût peuvent vous aider avec le renouvellement de statut, l'asile et la citoyenneté.", tips: ["Recherchez des organisations accréditées EOIR", "Méfiez-vous des 'notarios' — ce ne sont pas des avocats", "Les services d'aide juridique sont souvent gratuits pour les réfugiés"] },
     
       pt: { title: "Conectar-se com Assistência Jurídica em Imigração", description: "Advogados de imigração gratuitos ou de baixo custo podem ajudar com renovação de status, asilo e cidadania.", tips: ["Procure organizações credenciadas pela EOIR", "Cuidado com 'notarios' — eles não são advogados", "Serviços de assistência jurídica são frequentemente gratuitos para refugiados"] },
     
