@@ -6,7 +6,9 @@ import { eq, and } from "drizzle-orm";
 export interface IStorage {
   getUser(id: number): User | undefined;
   getUserByUsername(username: string): User | undefined;
+  getUserByAuth0Sub(auth0Sub: string): User | undefined;
   createUser(data: InsertUser): User;
+  upsertAuth0User(auth0Sub: string, email: string | null, displayName: string | null, avatarUrl: string | null): User;
   updateUserProfile(id: number, data: Partial<User>): User | undefined;
   getMilestones(userId: number): Milestone[];
   upsertMilestone(data: InsertMilestone): Milestone;
@@ -25,8 +27,37 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(users).where(eq(users.username, username)).get();
   }
 
+  getUserByAuth0Sub(auth0Sub: string): User | undefined {
+    return db.select().from(users).where(eq(users.auth0Sub, auth0Sub)).get();
+  }
+
   createUser(data: InsertUser): User {
     return db.insert(users).values(data).returning().get();
+  }
+
+  /**
+   * Find or create a user from Auth0 profile data.
+   * On first login, creates a new DB user. On subsequent logins, returns existing user.
+   */
+  upsertAuth0User(auth0Sub: string, email: string | null, displayName: string | null, avatarUrl: string | null): User {
+    const existing = this.getUserByAuth0Sub(auth0Sub);
+    if (existing) {
+      // Update email/display/avatar if changed
+      return db.update(users).set({
+        email: email ?? existing.email,
+        displayName: displayName ?? existing.displayName,
+        avatarUrl: avatarUrl ?? existing.avatarUrl,
+      }).where(eq(users.id, existing.id)).returning().get()!;
+    }
+    // Create new user from Auth0 profile
+    return db.insert(users).values({
+      username: displayName || email || auth0Sub,
+      password: "", // no password needed for Auth0 users
+      auth0Sub,
+      email,
+      displayName,
+      avatarUrl,
+    }).returning().get();
   }
 
   updateUserProfile(id: number, data: Partial<User>): User | undefined {

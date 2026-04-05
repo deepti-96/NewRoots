@@ -7,7 +7,27 @@ import multer from "multer";
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
-  // Auth - register
+  // Auth0 sync — called from frontend after Auth0 login to create/fetch DB user
+  app.post("/api/auth/sync", (req, res) => {
+    try {
+      const { auth0Sub, email, displayName, avatarUrl } = req.body;
+      if (!auth0Sub) return res.status(400).json({ error: "auth0Sub is required" });
+      const user = storage.upsertAuth0User(auth0Sub, email || null, displayName || null, avatarUrl || null);
+      res.json({
+        id: user.id,
+        username: user.displayName || user.username,
+        email: user.email,
+        displayName: user.displayName,
+        avatarUrl: user.avatarUrl,
+        language: user.language,
+        profileComplete: user.profileComplete,
+      });
+    } catch (e: any) {
+      res.status(400).json({ error: e.message });
+    }
+  });
+
+  // Legacy auth - register (kept for backwards compatibility)
   app.post("/api/auth/register", (req, res) => {
     try {
       const { username, password } = insertUserSchema.parse(req.body);
@@ -20,7 +40,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
-  // Auth - login
+  // Legacy auth - login
   app.post("/api/auth/login", (req, res) => {
     try {
       const { username, password } = req.body;

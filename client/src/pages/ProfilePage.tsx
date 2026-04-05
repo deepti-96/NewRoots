@@ -3,6 +3,7 @@ import { t, LANGUAGES, type Language } from "@/lib/translations";
 import AppNav from "@/components/AppNav";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
+import { useAuth0 } from "@auth0/auth0-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { LogOut, Globe, User, MapPin, Users, Briefcase, Shield, FileText } from "lucide-react";
@@ -23,9 +24,11 @@ export default function ProfilePage() {
     enabled: !!user,
   });
 
+  const { logout: auth0Logout } = useAuth0();
+
   function logout() {
     setUser(null);
-    navigate("/");
+    auth0Logout({ logoutParams: { returnTo: window.location.origin + window.location.pathname } });
   }
 
   const selectedLang = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];
@@ -47,11 +50,16 @@ export default function ProfilePage() {
         {/* User card */}
         <div className="bg-card border border-border rounded-2xl p-5 mb-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white text-xl font-bold">
-              {user.username.charAt(0).toUpperCase()}
-            </div>
+            {user.avatarUrl ? (
+              <img src={user.avatarUrl} alt={user.username} className="w-14 h-14 rounded-full object-cover" />
+            ) : (
+              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white text-xl font-bold">
+                {user.username.charAt(0).toUpperCase()}
+              </div>
+            )}
             <div>
-              <h2 className="font-bold text-lg">{user.username}</h2>
+              <h2 className="font-bold text-lg">{user.displayName || user.username}</h2>
+              {user.email && <p className="text-xs text-muted-foreground">{user.email}</p>}
               <p className="text-sm text-muted-foreground">NewRoots Member</p>
             </div>
           </div>

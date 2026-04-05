@@ -5,8 +5,12 @@ import { z } from "zod";
 // User / Family Profile
 export const users = sqliteTable("users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  username: text("username").notNull(),
+  password: text("password").notNull().default(""),
+  auth0Sub: text("auth0_sub").unique(), // Auth0 unique user ID (e.g. "auth0|abc123")
+  email: text("email"),
+  displayName: text("display_name"),
+  avatarUrl: text("avatar_url"),
   language: text("language").notNull().default("en"),
   arrivalDate: text("arrival_date"),
   familySize: integer("family_size").default(1),
