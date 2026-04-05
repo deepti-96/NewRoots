@@ -129,7 +129,8 @@ export default function OnboardingPage() {
           profileComplete: true,
       });
 
-      const milestoneKeys = ["sim_card", "address", "i94", "ssn", "bank_account", "health_insurance",
+      const milestoneKeys = ["sim_card", "address", "i94", "local_orientation", "emergency_contacts",
+        "ssn", "bank_account", "health_insurance",
         "snap", "school_enrollment", "drivers_license", "itin", "vita_tax", "wic", "medicaid"];
       const milestoneResults = await Promise.allSettled(
         milestoneKeys.map((key) => apiRequest("POST", "/api/milestones", { userId: user.id, key, completed: false })),
