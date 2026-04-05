@@ -73,7 +73,7 @@ export const MILESTONES: MilestoneItem[] = [
     week: 1,
     category: "identity",
     officialLink: "https://i94.cbp.dhs.gov",
-    requiredDocs: ["Passport"],
+    requiredDocs: ["doc_passport"],
     tips: ["It's free at i94.cbp.dhs.gov", "You'll need it for SSN, benefits, employment, and driver's license", "Print multiple copies and keep them safe"],
     translations: {
       es: { title: "Descarga tu Registro I-94", description: "El I-94 es tu registro oficial de llegada/salida de EE.UU." , tips: ["Es gratis en i94.cbp.dhs.gov", "Lo necesitarás para SSN, beneficios, empleo y licencia de conducir", "Imprime múltiples copias y guárdalas en un lugar seguro"] },
@@ -154,7 +154,7 @@ export const MILESTONES: MilestoneItem[] = [
     week: 2,
     category: "identity",
     officialLink: "https://www.ssa.gov/number-card/request-number-first-time",
-    requiredDocs: ["Passport", "Visa", "I-94"],
+    requiredDocs: ["doc_passport", "doc_visa", "doc_i94"],
     tips: ["Wait at least 10 days after arrival before applying", "Find your local SSA office at ssa.gov/locator", "It's free — never pay anyone to help you apply", "Processing takes 2-4 weeks"],
     translations: {
       es: { title: "Solicitar Número de Seguro Social (SSN)", description: "Un SSN es necesario para trabajar, pagar impuestos y muchos beneficios." , tips: ["Espera al menos 10 días después de llegar antes de solicitar", "Encuentra tu oficina local del SSA en ssa.gov/locator", "Es gratis — nunca pagues a nadie para ayudarte a solicitar", "El procesamiento tarda 2-4 semanas"] },
@@ -181,7 +181,7 @@ export const MILESTONES: MilestoneItem[] = [
     week: 2,
     category: "financial",
     officialLink: "https://www.consumerfinance.gov/consumer-tools/bank-accounts/",
-    requiredDocs: ["Passport", "Proof of address"],
+    requiredDocs: ["doc_passport", "doc_proof_of_address"],
     tips: ["CFPB confirms: you do NOT need an SSN to open an account", "Credit unions often have lower fees", "Look for accounts with no minimum balance", "Set up direct deposit as soon as you have income"],
     translations: {
       es: { title: "Abrir una Cuenta Bancaria", description: "No necesitas SSN para abrir una cuenta bancaria." , tips: ["La CFPB confirma: NO necesitas SSN para abrir una cuenta", "Las cooperativas de crédito suelen tener comisiones más bajas", "Busca cuentas sin saldo mínimo", "Configura el depósito directo tan pronto como tengas ingresos"] },
@@ -207,7 +207,7 @@ export const MILESTONES: MilestoneItem[] = [
     urgency: "urgent",
     week: 2,
     category: "health",
-    requiredDocs: ["I-94", "Immunization records from home country", "Any medical records"],
+    requiredDocs: ["doc_i94", "doc_immunization_records_home", "doc_any_medical_records"],
     tips: ["Local health departments usually conduct these for free", "Bring any medical records from your home country", "This is separate from getting health insurance"],
     translations: {
       es: { title: "Completar la Evaluación de Salud Inicial", description: "Se requiere un examen médico dentro de los primeros 30 días." , tips: ["Los departamentos de salud locales generalmente realizan esto gratis", "Lleva cualquier historial médico de tu país de origen", "Esto es independiente de obtener seguro médico"] },
@@ -234,7 +234,7 @@ export const MILESTONES: MilestoneItem[] = [
     week: 2,
     category: "health",
     officialLink: "https://www.healthcare.gov/immigrants/",
-    requiredDocs: ["Immigration documents", "I-94"],
+    requiredDocs: ["doc_immigration_documents", "doc_i94"],
     tips: ["Visit healthcare.gov/immigrants for options", "You may qualify for subsidies", "Moving to US = Special Enrollment Period (60 days)", "Free navigators at healthcare.gov/find-assistance"],
     translations: {
       es: { title: "Inscribirse en Seguro Médico", description: "Los inmigrantes pueden calificar para cobertura del Marketplace." , tips: ["Visita healthcare.gov/immigrants para ver opciones", "Puede que califiques para subsidios", "Mudarse a EE.UU. = Período de Inscripción Especial (60 días)", "Navegadores gratuitos en healthcare.gov/find-assistance"] },
@@ -261,7 +261,7 @@ export const MILESTONES: MilestoneItem[] = [
     week: 2,
     category: "family",
     officialLink: "https://www.ed.gov/",
-    requiredDocs: ["Proof of address", "Immunization records (can be obtained after enrollment)"],
+    requiredDocs: ["doc_proof_of_address", "doc_immunization_records_enrollment"],
     tips: ["Schools cannot ask about immigration status", "Contact your local school district office", "Language assistance must be provided by law", "Free school meals may be available (apply at school)"],
     translations: {
       es: { title: "Inscribir a los Niños en la Escuela", description: "Todos los niños tienen derecho a educación pública gratuita." , tips: ["Las escuelas no pueden preguntar sobre el estatus migratorio", "Contacta la oficina de tu distrito escolar local", "La asistencia lingüística debe proporcionarse por ley", "Puede haber comidas escolares gratuitas (solicita en la escuela)"] },
@@ -421,7 +421,7 @@ export const MILESTONES: MilestoneItem[] = [
     week: 4,
     category: "identity",
     officialLink: "https://www.sss.gov/register/immigrants/",
-    requiredDocs: ["I-94 or SSN"],
+    requiredDocs: ["doc_i94_or_ssn"],
     tips: ["Failure to register can disqualify you from citizenship and federal jobs", "It does NOT mean you are joining the military", "You can register online at sss.gov or at a post office", "This is legally required — not optional"],
     translations: {
       es: { title: "Inscribirse en el Servicio Selectivo (Varones 18-25)", description: "La ley federal REQUIERE inscripción de varones 18-25 dentro de 30 días." , tips: ["No registrarse puede descalificarte para la ciudadanía y empleos federales", "NO significa que te estás uniendo al ejército", "Puedes registrarte en línea en sss.gov o en una oficina de correos", "Esto es legalmente obligatorio — no es opcional"] },
@@ -448,7 +448,7 @@ export const MILESTONES: MilestoneItem[] = [
     week: 4,
     category: "identity",
     officialLink: "https://www.usa.gov/state-motor-vehicle-services",
-    requiredDocs: ["Passport", "I-94", "Proof of address", "SSN (if available)"],
+    requiredDocs: ["doc_passport", "doc_i94", "doc_proof_of_address", "doc_ssn_if_available"],
     tips: ["Contact your local DMV for specific requirements", "Some states offer 'Real ID' to immigrants with valid status", "Study materials are available online in multiple languages", "A state ID is useful even if you don't drive"],
     translations: {
       es: { title: "Obtener ID Estatal o Licencia de Conducir", description: "La mayoría de estados permiten a inmigrantes obtener una ID estatal." , tips: ["Contacta tu DMV local para requisitos específicos", "Algunos estados ofrecen 'Real ID' a inmigrantes con estatus válido", "Los materiales de estudio están disponibles en línea en varios idiomas", "Un ID estatal es útil incluso si no conduces"] },
@@ -531,7 +531,7 @@ export const MILESTONES: MilestoneItem[] = [
     week: 5,
     category: "employment",
     officialLink: "https://www.uscis.gov/i-765",
-    requiredDocs: ["I-94", "Passport", "Passport photos", "Filing fee or fee waiver"],
+    requiredDocs: ["doc_i94", "doc_passport", "doc_passport_photos", "doc_filing_fee"],
     tips: ["Refugees get work authorization automatically — you may not need to file separately", "Asylees should apply as soon as status is granted", "Check if you qualify for a fee waiver (Form I-912)", "Processing time: check uscis.gov/processing-times", "You CANNOT work until you receive your EAD card"],
     translations: {
       es: { title: "Solicitar Autorización de Trabajo (EAD)", description: "Si tu estatus requiere permiso de trabajo, solicita con el Formulario I-765." , tips: ["Los refugiados obtienen autorización de trabajo automáticamente — puede que no necesites solicitar por separado", "Los asilados deben solicitar tan pronto como se otorgue el estatus", "Verifica si calificas para una exención de tarifa (Formulario I-912)", "Tiempo de procesamiento: consulta uscis.gov/processing-times", "NO puedes trabajar hasta recibir tu tarjeta EAD"] },

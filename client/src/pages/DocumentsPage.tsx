@@ -18,19 +18,19 @@ const CATEGORIES = [
     id: "identity",
     title: "docCat1",
     icon: User,
-    docs: ["Passport", "Visa", "I-94 Form", "Social Security Number", "Birth Certificate"]
+    docs: ["doc_passport", "doc_visa", "doc_i94_form", "doc_social_security_number", "doc_birth_certificate"]
   },
   {
     id: "housing",
     title: "docCat2",
     icon: Home,
-    docs: ["Lease Agreement", "Utility Bill"]
+    docs: ["doc_lease_agreement", "doc_utility_bill"]
   },
   {
     id: "finance",
     title: "docCat3",
     icon: Heart,
-    docs: ["Medical Records", "Immunization records", "Bank Statement", "Employment Authorization (EAD)"]
+    docs: ["doc_medical_records", "doc_immunization_records", "doc_bank_statement", "doc_ead"]
   }
 ];
 
@@ -182,7 +182,7 @@ export default function DocumentsPage() {
 
                       <div className="space-y-1">
                         <h3 className={`font-black text-lg transition-colors ${isSecured ? "text-slate-900" : "text-slate-500 group-hover:text-emerald-900"}`}>
-                          {doc}
+                          {t(lang, doc as any)}
                         </h3>
                         <p className={`text-xs font-medium transition-colors ${isSecured ? "text-emerald-600/70" : "text-slate-400 group-hover:text-emerald-600/70"}`}>
                           {isSecured ? "ID: #" + Math.random().toString(36).substr(2, 6).toUpperCase() : t(lang, "requiredForJourney")}

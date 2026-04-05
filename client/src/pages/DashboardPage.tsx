@@ -231,7 +231,7 @@ export default function DashboardPage() {
                                 <div className="flex flex-wrap gap-2">
                                   {milestone.requiredDocs.map(doc => (
                                     <span key={doc} className="text-xs bg-white border border-slate-200 text-slate-700 rounded-lg px-3 py-1 shadow-sm">
-                                      {doc}
+                                      {t(lang, doc as any)}
                                     </span>
                                   ))}
                                 </div>
