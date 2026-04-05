@@ -157,7 +157,7 @@ export default function OnboardingPage() {
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100">
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-slate-900 mb-2">{t(lang, "chooseLanguage")}</h2>
-          <p className="text-base text-slate-600">Select the language most comfortable for you.</p>
+          <p className="text-base text-slate-600">{t(lang, "chooseLanguageSub")}</p>
           <VoiceButton text={t(lang, "chooseLanguage")} lang={lang} className="mt-3" />
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -187,8 +187,8 @@ export default function OnboardingPage() {
         <h3 className="font-bold text-lg text-slate-900 mb-4">{t(lang, "comfortMode")}</h3>
         <div className="space-y-3">
           {[
-            { key: "voice", label: t(lang, "voiceReadout"), desc: "Have text read aloud automatically", state: voiceLocal, set: setVoiceLocal },
-            { key: "large", label: t(lang, "largeText"), desc: "Increase font size for easier reading", state: largeTextLocal, set: setLargeTextLocal },
+            { key: "voice", label: t(lang, "voiceReadout"), desc: t(lang, "voiceReadoutSub"), state: voiceLocal, set: setVoiceLocal },
+            { key: "large", label: t(lang, "largeText"), desc: t(lang, "largeTextSub"), state: largeTextLocal, set: setLargeTextLocal },
           ].map(({ key, label, desc, state: s, set }) => (
             <button
               key={key}
@@ -213,7 +213,7 @@ export default function OnboardingPage() {
     <div key="1" className="space-y-6 animate-in slide-in-from-right duration-300">
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100">
         <h2 className="text-2xl font-bold text-slate-900 mb-2">{t(lang, "familySetup")}</h2>
-        <p className="text-base text-slate-600">Tell us about your family so we can personalize your plan.</p>
+        <p className="text-base text-slate-600">{t(lang, "familySetupSub")}</p>
       </div>
 
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 space-y-8">
@@ -251,9 +251,9 @@ export default function OnboardingPage() {
           </div>
         ))}
 
-        {/* State Dropdown - Floating Label Style */}
-        <div className="relative pt-2">
-          <label className="absolute -top-1 left-3 bg-white px-1 text-xs font-bold text-emerald-800 z-10">{t(lang, "whichState")}</label>
+        {/* State Dropdown */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold text-emerald-800">{t(lang, "whichState")}</label>
           <select
             data-testid="select-state"
             value={state}
@@ -264,9 +264,9 @@ export default function OnboardingPage() {
           </select>
         </div>
 
-        {/* Arrival Date - Floating Label Style */}
-        <div className="relative pt-2">
-        <label className="absolute -top-1 left-3 bg-white px-1 text-xs font-bold text-emerald-800 z-10">When did you arrive in the U.S.?</label>
+        {/* Arrival Date */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold text-emerald-800">{t(lang, "arrivalDateLabel")}</label>
         <div className="grid grid-cols-3 gap-3">
           <Select
             value={String(selectedMonth)}
@@ -324,7 +324,7 @@ export default function OnboardingPage() {
     <div key="2" className="space-y-6 animate-in slide-in-from-right duration-300">
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100">
         <h2 className="text-2xl font-bold text-slate-900 mb-2">{t(lang, "whatDocuments")}</h2>
-        <p className="text-base text-slate-600">Check all the documents you currently have. This helps us personalize your journey.</p>
+        <p className="text-base text-slate-600">{t(lang, "whatDocumentsSub")}</p>
       </div>
 
       <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3">
@@ -353,7 +353,7 @@ export default function OnboardingPage() {
       </div>
       
       <p className="text-sm font-medium text-slate-500 bg-slate-100/50 border border-slate-200 rounded-xl p-4 text-center">
-        We don't store your documents. This is only used to show which steps you still need to complete.
+        {t(lang, "docsPrivacyNote")}
       </p>
     </div>,
 
@@ -365,28 +365,28 @@ export default function OnboardingPage() {
       
       <div>
         <h2 className="text-3xl font-extrabold text-slate-900 mb-3">{t(lang, "setupComplete")}</h2>
-        <p className="text-slate-600 text-lg">Your personalized 90-day plan is ready.</p>
+        <p className="text-slate-600 text-lg">{t(lang, "planReady")}</p>
       </div>
 
       <div className="bg-white border-2 border-slate-100 rounded-2xl shadow-sm text-left max-w-sm mx-auto overflow-hidden">
         <div className="bg-slate-50 px-6 py-4 border-b border-slate-100">
-          <h3 className="font-bold text-slate-900 text-sm tracking-wide uppercase">Profile Summary</h3>
+          <h3 className="font-bold text-slate-900 text-sm tracking-wide uppercase">{t(lang, "profileSummaryTitle")}</h3>
         </div>
         <div className="p-6 space-y-4">
           <div className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-            <span className="text-slate-500 font-medium">Family members</span>
+            <span className="text-slate-500 font-medium">{t(lang, "summaryFamilyMembers")}</span>
             <span className="font-extrabold text-slate-900 text-lg">{familySize}</span>
           </div>
           <div className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-            <span className="text-slate-500 font-medium">State</span>
+            <span className="text-slate-500 font-medium">{t(lang, "summaryState")}</span>
             <span className="font-extrabold text-slate-900 text-lg">{state}</span>
           </div>
           <div className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-            <span className="text-slate-500 font-medium">Documents secured</span>
+            <span className="text-slate-500 font-medium">{t(lang, "summaryDocsSecured")}</span>
             <span className="font-extrabold text-slate-900 text-lg text-emerald-700">{selectedDocs.length}</span>
           </div>
           <div className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-            <span className="text-slate-500 font-medium">Language</span>
+            <span className="text-slate-500 font-medium">{t(lang, "summaryLanguage")}</span>
             <span className="font-extrabold text-slate-900 text-lg">{LANGUAGES.find(l => l.code === lang)?.nativeLabel}</span>
           </div>
         </div>
