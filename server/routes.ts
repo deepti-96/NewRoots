@@ -47,8 +47,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
         });
       });
     } catch (e: any) {
-      console.error("[auth/sync] error:", e);
-      res.status(400).json({ error: e.message, stack: process.env.NODE_ENV !== "production" ? e.stack : undefined });
+      res.status(400).json({ error: e.message });
     }
   });
 
