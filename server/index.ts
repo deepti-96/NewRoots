@@ -4,8 +4,49 @@ import { registerRoutes } from "./routes.js";
 import { serveStatic } from "./static.js";
 import { createServer } from "http";
 
+import session from "express-session";
+import passport from "passport";
+import connectMemoryStore from "memorystore";
+import { storage } from "./storage.js";
+
 const app = express();
 const httpServer = createServer(app);
+
+const MemoryStore = connectMemoryStore(session);
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "new-roots-top-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: "lax",
+    },
+    store: new MemoryStore({
+      checkPeriod: 86400000, // prune expired entries every 24h
+    }),
+  }),
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Passport serialization
+passport.serializeUser((user: any, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id: number, done) => {
+  try {
+    const user = await storage.getUser(id);
+    done(null, user || false);
+  } catch (err) {
+    done(err);
+  }
+});
 
 declare module "http" {
   interface IncomingMessage {
