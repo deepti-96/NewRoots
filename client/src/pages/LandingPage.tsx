@@ -46,11 +46,20 @@ export default function LandingPage() {
   }
 
   function handleGetStarted() {
-    loginWithRedirect({ authorizationParams: { screen_hint: "signup" } });
+    loginWithRedirect({ 
+      authorizationParams: { 
+        screen_hint: "signup",
+        prompt: "select_account"
+      } 
+    });
   }
 
   function handleSignIn() {
-    loginWithRedirect();
+    loginWithRedirect({
+      authorizationParams: {
+        prompt: "select_account"
+      }
+    });
   }
 
   const selectedLang = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];

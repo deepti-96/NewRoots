@@ -15,13 +15,19 @@ import {
 import { useAuth0 } from "@auth0/auth0-react";
 import { useApp } from "@/App";
 import { LanguageToggle } from "@/components/ui/language-toggle";
+import { apiRequest } from "@/lib/queryClient";
 
 export function Sidebar() {
   const [location, navigate] = useLocation();
   const { language, setUser } = useApp();
   const { logout: auth0Logout } = useAuth0();
 
-  function logout() {
+  async function logout() {
+    try {
+      await apiRequest("POST", "/api/auth/logout");
+    } catch (e) {
+      console.error("Backend logout failed", e);
+    }
     setUser(null);
     auth0Logout({ 
       logoutParams: { 
