@@ -58,6 +58,21 @@ async function buildAll() {
     logLevel: "info",
   });
 
+  console.log("building vercel serverless function...");
+  await esbuild({
+    entryPoints: ["api/index.ts"],
+    platform: "node",
+    bundle: true,
+    format: "esm",
+    outfile: "api/index.js",
+    define: {
+      "process.env.NODE_ENV": '"production"',
+    },
+    minify: true,
+    external: ["@libsql/client"],
+    logLevel: "info",
+  });
+
 }
 
 buildAll().catch((err) => {
