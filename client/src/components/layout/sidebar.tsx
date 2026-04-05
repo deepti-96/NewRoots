@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useApp } from "@/App";
+import { t } from "@/lib/translations";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -38,30 +39,31 @@ export function Sidebar() {
     });
   }
 
+  const lang = language;
   const navGroups = [
     {
-      group: language === "en" ? "Overview" : "Visión General",
+      group: t(lang, "navOverview"),
       items: [
-        { href: "/dashboard", icon: LayoutDashboard, label: language === "en" ? "Dashboard" : "Panel" },
+        { href: "/dashboard", icon: LayoutDashboard, label: t(lang, "navDashboard") },
       ]
     },
     {
-      group: language === "en" ? "Support & Services" : "Soporte y Servicios",
+      group: t(lang, "navSupport"),
       items: [
-        { href: "/benefits", icon: HeartHandshake, label: language === "en" ? "Benefits Explorer" : "Beneficios" },
-        { href: "/taxes", icon: Calculator, label: language === "en" ? "Taxes & Finance" : "Impuestos y Finanzas" },
+        { href: "/benefits", icon: HeartHandshake, label: t(lang, "navBenefits") },
+        { href: "/taxes", icon: Calculator, label: t(lang, "navTaxes") },
       ]
     },
     {
-      group: language === "en" ? "Manage" : "Gestionar",
+      group: t(lang, "navManage"),
       items: [
-        { href: "/documents", icon: FileText, label: language === "en" ? "My Documents" : "Mis Documentos" },
+        { href: "/documents", icon: FileText, label: t(lang, "navDocuments") },
       ]
     },
     {
-      group: language === "en" ? "Account" : "Cuenta",
+      group: t(lang, "navAccount"),
       items: [
-        { href: "/profile", icon: User, label: language === "en" ? "Family Profile" : "Perfil Familiar" },
+        { href: "/profile", icon: User, label: t(lang, "navProfile") },
       ]
     }
   ];
@@ -108,7 +110,7 @@ export function Sidebar() {
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-slate-600 hover:bg-red-50 hover:text-red-700"
         >
           <LogOut className="w-5 h-5 text-slate-400" />
-          {language === "en" ? "Sign Out" : "Cerrar sesión"}
+          {t(lang, "signOut")}
         </button>
         <LanguageToggle />
       </div>
