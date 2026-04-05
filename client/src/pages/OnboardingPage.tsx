@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useApp } from "@/App";
 import { t, LANGUAGES, type Language } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { speakText } from "@/lib/voiceUtils";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -19,6 +20,29 @@ const US_STATES = [
   "Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont",
   "Virginia","Washington","West Virginia","Wisconsin","Wyoming"
 ];
+
+const ARRIVAL_MONTHS = [
+  { value: 1, label: "January" },
+  { value: 2, label: "February" },
+  { value: 3, label: "March" },
+  { value: 4, label: "April" },
+  { value: 5, label: "May" },
+  { value: 6, label: "June" },
+  { value: 7, label: "July" },
+  { value: 8, label: "August" },
+  { value: 9, label: "September" },
+  { value: 10, label: "October" },
+  { value: 11, label: "November" },
+  { value: 12, label: "December" },
+] as const;
+
+function formatDatePart(value: number) {
+  return value.toString().padStart(2, "0");
+}
+
+function toIsoDate(year: number, month: number, day: number) {
+  return `${year}-${formatDatePart(month)}-${formatDatePart(day)}`;
+}
 
 export default function OnboardingPage() {
   const [, navigate] = useLocation();
@@ -37,6 +61,33 @@ export default function OnboardingPage() {
   const [voiceLocal, setVoiceLocal] = useState(false);
 
   const lang = language;
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1;
+  const currentDay = today.getDate();
+  const [selectedYear, selectedMonth, selectedDay] = arrivalDate.split("-").map(Number);
+  const arrivalYearOptions = Array.from({ length: currentYear - 1970 + 1 }, (_, index) => currentYear - index);
+  const arrivalMonthOptions = ARRIVAL_MONTHS.filter((month) =>
+    selectedYear === currentYear ? month.value <= currentMonth : true,
+  );
+  const daysInSelectedMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+  const maxArrivalDay =
+    selectedYear === currentYear && selectedMonth === currentMonth
+      ? Math.min(daysInSelectedMonth, currentDay)
+      : daysInSelectedMonth;
+  const arrivalDayOptions = Array.from({ length: maxArrivalDay }, (_, index) => index + 1);
+
+  function updateArrivalDate(year: number, month: number, day: number) {
+    const safeMonth = year === currentYear ? Math.min(month, currentMonth) : month;
+    const daysInMonth = new Date(year, safeMonth, 0).getDate();
+    const futureDayLimit =
+      year === currentYear && safeMonth === currentMonth
+        ? Math.min(daysInMonth, currentDay)
+        : daysInMonth;
+    const safeDay = Math.min(day, futureDayLimit);
+
+    setArrivalDate(toIsoDate(year, safeMonth, safeDay));
+  }
   const totalSteps = 4;
 
   function toggleDoc(doc: string) {
@@ -194,14 +245,55 @@ export default function OnboardingPage() {
 
       <div>
         <label className="block text-sm font-medium mb-2">When did you arrive in the U.S.?</label>
-        <input
-          data-testid="input-arrival-date"
-          type="date"
-          value={arrivalDate}
-          onChange={e => setArrivalDate(e.target.value)}
-          max={new Date().toISOString().split("T")[0]}
-          className="w-full border border-border rounded-xl px-3 py-2.5 bg-background text-sm"
-        />
+        <div className="grid grid-cols-3 gap-2">
+          <Select
+            value={String(selectedMonth)}
+            onValueChange={(value) => updateArrivalDate(selectedYear, Number(value), selectedDay)}
+          >
+            <SelectTrigger data-testid="select-arrival-month" className="h-11 rounded-xl">
+              <SelectValue placeholder="Month" />
+            </SelectTrigger>
+            <SelectContent>
+              {arrivalMonthOptions.map((month) => (
+                <SelectItem key={month.value} value={String(month.value)}>
+                  {month.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={String(selectedDay)}
+            onValueChange={(value) => updateArrivalDate(selectedYear, selectedMonth, Number(value))}
+          >
+            <SelectTrigger data-testid="select-arrival-day" className="h-11 rounded-xl">
+              <SelectValue placeholder="Day" />
+            </SelectTrigger>
+            <SelectContent>
+              {arrivalDayOptions.map((day) => (
+                <SelectItem key={day} value={String(day)}>
+                  {day}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={String(selectedYear)}
+            onValueChange={(value) => updateArrivalDate(Number(value), selectedMonth, selectedDay)}
+          >
+            <SelectTrigger data-testid="select-arrival-year" className="h-11 rounded-xl">
+              <SelectValue placeholder="Year" />
+            </SelectTrigger>
+            <SelectContent>
+              {arrivalYearOptions.map((year) => (
+                <SelectItem key={year} value={String(year)}>
+                  {year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>,
 
