@@ -96,7 +96,7 @@ export default function OnboardingPage() {
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100">
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-slate-900 mb-2">{t(lang, "chooseLanguage")}</h2>
-          <p className="text-base text-slate-600">Select the language most comfortable for you.</p>
+          <p className="text-base text-slate-600">{t(lang, "chooseLanguageSub")}</p>
           <VoiceButton text={t(lang, "chooseLanguage")} lang={lang} className="mt-3" />
         </div>
         <div className="grid grid-cols-2 gap-4">
