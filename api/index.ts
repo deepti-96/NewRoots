@@ -2,14 +2,8 @@ import express from "express";
 import { registerRoutes } from "../server/routes.js";
 import { storage } from "../server/storage.js";
 import { createServer } from "http";
-import { createRemoteJWKSet, jwtVerify } from "jose";
 
 const AUTH0_DOMAIN = "dev-p248ayy0xaycz1lz.us.auth0.com";
-const AUTH0_AUDIENCE = "https://new-roots-kappa.vercel.app";
-const JWKS_URI = `https://${AUTH0_DOMAIN}/.well-known/jwks.json`;
-
-// Cache the JWKS remotely — reused across warm invocations
-const JWKS = createRemoteJWKSet(new URL(JWKS_URI));
 
 const app = express();
 app.use(express.json());
@@ -25,37 +19,52 @@ app.use((_req, res, next) => {
   next();
 });
 
-// JWT auth middleware — attaches req.dbUser when a valid Bearer token is present
+// Simple in-process cache: token → { sub, exp }
+const tokenCache = new Map<string, { sub: string; exp: number }>();
+
+async function resolveAuth0Sub(token: string): Promise<string | null> {
+  const now = Date.now();
+  const cached = tokenCache.get(token);
+  if (cached && cached.exp > now) return cached.sub;
+
+  try {
+    const resp = await fetch(`https://${AUTH0_DOMAIN}/userinfo`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json() as { sub?: string };
+    if (!data.sub) return null;
+    // Cache for 5 minutes to avoid hammering Auth0 on every request
+    tokenCache.set(token, { sub: data.sub, exp: now + 5 * 60 * 1000 });
+    return data.sub;
+  } catch {
+    return null;
+  }
+}
+
+// Auth middleware — verifies Bearer token via Auth0 /userinfo and attaches req.dbUser
 async function attachUser(req: any, _res: any, next: any) {
   const authHeader = req.headers.authorization as string | undefined;
   if (!authHeader?.startsWith("Bearer ")) return next();
 
   const token = authHeader.slice(7);
-  try {
-    const { payload } = await jwtVerify(token, JWKS, {
-      issuer: `https://${AUTH0_DOMAIN}/`,
-      audience: AUTH0_AUDIENCE,
-    });
-    const auth0Sub = payload.sub as string;
-    if (auth0Sub) {
-      const dbUser = await storage.getUserByAuth0Sub(auth0Sub);
-      if (dbUser) req.dbUser = dbUser;
-    }
-  } catch {
-    // Invalid token — leave req.dbUser undefined; route will return 401
+  const auth0Sub = await resolveAuth0Sub(token);
+  if (auth0Sub) {
+    const dbUser = await storage.getUserByAuth0Sub(auth0Sub);
+    if (dbUser) req.dbUser = dbUser;
   }
   next();
 }
 
 app.use(attachUser);
 
-// Shim so existing route handlers that use session/passport methods keep working
+// Shim so existing route handlers that rely on passport/session keep working
 app.use((req: any, _res: any, next: any) => {
   req.isAuthenticated = () => !!req.dbUser;
   req.user = req.dbUser;
-  // req.login is called by /api/auth/sync — just invoke callback immediately (no-op session)
+  // req.login called by /api/auth/sync — no-op (no session needed)
   req.login = (_user: any, cb: (err?: any) => void) => cb();
-  // req.logout is called by /api/auth/logout — no-op (Auth0 logout is client-side)
+  // req.logout called by /api/auth/logout — no-op (Auth0 handles logout client-side)
   req.logout = (cb: (err?: any) => void) => cb();
   next();
 });
