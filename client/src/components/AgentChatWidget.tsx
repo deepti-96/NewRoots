@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Mic, Loader2, Volume2, Trash2 } from "lucide-react";
+import { MessageCircle, X, Send, Mic, Loader2, Volume2, Square, Trash2 } from "lucide-react";
 import { useApp } from "@/App";
 import { apiRequest } from "@/lib/queryClient";
 import { ElevenLabsVoiceInput, speakText, stopSpeaking } from "@/lib/voiceUtils";
@@ -19,6 +19,7 @@ export default function AgentChatWidget() {
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  const [loadingIdx, setLoadingIdx] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const voiceRef = useRef<ElevenLabsVoiceInput | null>(null);
 
@@ -65,8 +66,17 @@ export default function AgentChatWidget() {
 
       // Only auto-speak when the user asked via voice (mic)
       if (viaVoice) {
-        speakText(data.reply, language, () => setSpeakingIdx(null));
-        setSpeakingIdx(messages.length + 1);
+        const newIdx = messages.length + 1;
+        setLoadingIdx(newIdx);
+        speakText(data.reply, language, () => {
+          setSpeakingIdx(null);
+          setLoadingIdx(null);
+        }).then(() => {
+          setLoadingIdx(null);
+          setSpeakingIdx(newIdx);
+        }).catch(() => {
+          setLoadingIdx(null);
+        });
       }
     } catch (err) {
       setMessages(prev => [...prev, {
@@ -101,20 +111,34 @@ export default function AgentChatWidget() {
   }
 
   function speakMessage(content: string, idx: number) {
-    if (speakingIdx === idx) {
+    // Clicking the active (loading or playing) button → stop immediately
+    if (speakingIdx === idx || loadingIdx === idx) {
       stopSpeaking();
       setSpeakingIdx(null);
+      setLoadingIdx(null);
       return;
     }
+    // Stop whatever else is playing/loading, then start this one
     stopSpeaking();
-    speakText(content, language, () => setSpeakingIdx(null));
-    setSpeakingIdx(idx);
+    setSpeakingIdx(null);
+    setLoadingIdx(idx);
+    speakText(content, language, () => {
+      setSpeakingIdx(null);
+      setLoadingIdx(null);
+    }).then(() => {
+      setLoadingIdx(null);
+      setSpeakingIdx(idx);
+    }).catch(() => {
+      setLoadingIdx(null);
+      setSpeakingIdx(null);
+    });
   }
 
   async function clearChat() {
     if (!user) return;
     stopSpeaking();
     setSpeakingIdx(null);
+    setLoadingIdx(null);
     setMessages([]);
     try {
       await apiRequest("POST", "/api/chat/clear", { userId: user.id });
@@ -160,7 +184,7 @@ export default function AgentChatWidget() {
                 <Trash2 className="w-4 h-4" />
               </button>
               <button
-                onClick={() => { setOpen(false); stopSpeaking(); }}
+                onClick={() => { setOpen(false); stopSpeaking(); setSpeakingIdx(null); setLoadingIdx(null); }}
                 className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               >
                 <X className="w-4 h-4" />
@@ -182,19 +206,29 @@ export default function AgentChatWidget() {
                       {msg.content}
                     </ReactMarkdown>
                   </div>
-                  {msg.role === "assistant" && (
-                    <button
-                      onClick={() => speakMessage(msg.content, i)}
-                      className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                        speakingIdx === i
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-background border border-border text-muted-foreground hover:text-primary"
-                      }`}
-                      title="Listen to this"
-                    >
-                      <Volume2 className="w-3 h-3" />
-                    </button>
-                  )}
+                  {msg.role === "assistant" && (() => {
+                    const isLoading = loadingIdx === i;
+                    const isPlaying = speakingIdx === i;
+                    return (
+                      <button
+                        onClick={() => speakMessage(msg.content, i)}
+                        disabled={loadingIdx !== null && loadingIdx !== i}
+                        className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center transition-colors disabled:opacity-40 ${
+                          isLoading || isPlaying
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-background border border-border text-muted-foreground hover:text-primary"
+                        }`}
+                        title={isPlaying ? "Stop" : isLoading ? "Loading..." : "Listen to this"}
+                      >
+                        {isLoading
+                          ? <Loader2 className="w-3 h-3 animate-spin" />
+                          : isPlaying
+                          ? <Square className="w-3 h-3 fill-current" />
+                          : <Volume2 className="w-3 h-3" />
+                        }
+                      </button>
+                    );
+                  })()}
                 </div>
               </div>
             ))}
