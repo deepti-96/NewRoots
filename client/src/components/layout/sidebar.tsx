@@ -19,7 +19,7 @@ import { apiRequest } from "@/lib/queryClient";
 
 export function Sidebar() {
   const [location, navigate] = useLocation();
-  const { language, setUser } = useApp();
+  const { language, setUser, setLanguage } = useApp();
   const { logout: auth0Logout } = useAuth0();
 
   async function logout() {
@@ -29,6 +29,8 @@ export function Sidebar() {
       console.error("Backend logout failed", e);
     }
     setUser(null);
+    localStorage.removeItem("newroots_lang");
+    setLanguage("en");
     auth0Logout({ 
       logoutParams: { 
         returnTo: window.location.origin 
