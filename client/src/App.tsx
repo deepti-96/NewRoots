@@ -81,8 +81,20 @@ export default function App() {
     localStorage.setItem("newroots_lang", lang);
     setLanguageState(lang);
   };
-  const [largeText, setLargeText] = useState(false);
-  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [largeText, setLargeTextState] = useState(
+    () => localStorage.getItem("newroots_largetext") === "1"
+  );
+  const setLargeText = (val: boolean) => {
+    localStorage.setItem("newroots_largetext", val ? "1" : "0");
+    setLargeTextState(val);
+  };
+  const [voiceEnabled, setVoiceEnabledState] = useState(
+    () => localStorage.getItem("newroots_voice") === "1"
+  );
+  const setVoiceEnabled = (val: boolean) => {
+    localStorage.setItem("newroots_voice", val ? "1" : "0");
+    setVoiceEnabledState(val);
+  };
   const [syncing, setSyncing] = useState(false);
 
   const { isAuthenticated, isLoading, user: auth0User } = useAuth0();

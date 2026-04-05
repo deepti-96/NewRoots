@@ -1,7 +1,8 @@
 import { Volume2, VolumeX, Loader2 } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { speakText, stopSpeaking, isSpeaking } from "@/lib/voiceUtils";
 import type { Language } from "@/lib/translations";
+import { useApp } from "@/App";
 
 interface Props {
   text: string;
@@ -12,8 +13,28 @@ interface Props {
 type PlayState = "idle" | "loading" | "playing";
 
 export default function VoiceButton({ text, lang, className = "" }: Props) {
+  const { voiceEnabled } = useApp();
   const [state, setState] = useState<PlayState>("idle");
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hasAutoPlayed = useRef(false);
+
+  // Auto-play once on mount when voice readout is enabled globally
+  useEffect(() => {
+    if (voiceEnabled && !hasAutoPlayed.current) {
+      hasAutoPlayed.current = true;
+      // Small delay so the page has settled before speaking
+      const timer = setTimeout(() => toggle(), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [voiceEnabled]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Stop speaking when the component unmounts (e.g. page navigation)
+  useEffect(() => {
+    return () => {
+      clearPoll();
+      stopSpeaking();
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function clearPoll() {
     if (pollRef.current !== null) {
