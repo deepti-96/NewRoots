@@ -126,8 +126,8 @@ export default function OnboardingPage() {
         <h3 className="font-bold text-lg text-slate-900 mb-4">{t(lang, "comfortMode")}</h3>
         <div className="space-y-3">
           {[
-            { key: "voice", label: t(lang, "voiceReadout"), desc: "Have text read aloud automatically", state: voiceLocal, set: setVoiceLocal },
-            { key: "large", label: t(lang, "largeText"), desc: "Increase font size for easier reading", state: largeTextLocal, set: setLargeTextLocal },
+            { key: "voice", label: t(lang, "voiceReadout"), desc: t(lang, "voiceReadoutSub"), state: voiceLocal, set: setVoiceLocal },
+            { key: "large", label: t(lang, "largeText"), desc: t(lang, "largeTextSub"), state: largeTextLocal, set: setLargeTextLocal },
           ].map(({ key, label, desc, state: s, set }) => (
             <button
               key={key}
