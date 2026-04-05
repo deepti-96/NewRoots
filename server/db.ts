@@ -6,7 +6,7 @@ import * as schema from "../shared/schema.js";
 const url = process.env.TURSO_DATABASE_URL ?? "file:data.db";
 const authToken = process.env.TURSO_AUTH_TOKEN;
 
-const client = createClient(authToken ? { url, authToken } : { url });
+export const client = createClient(authToken ? { url, authToken } : { url });
 
 export const db = drizzle(client, { schema });
 
@@ -44,6 +44,11 @@ export async function initDb() {
       reminder_type TEXT NOT NULL,
       scheduled_date TEXT NOT NULL,
       dismissed INTEGER DEFAULT 0
+    );
+    CREATE TABLE IF NOT EXISTS sessions (
+      sid TEXT PRIMARY KEY,
+      sess TEXT NOT NULL,
+      expire INTEGER NOT NULL
     );
   `);
 }
