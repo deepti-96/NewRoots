@@ -1,28 +1,28 @@
 import React from "react";
 import { useApp } from "@/App";
 import { Button } from "@/components/ui/button";
+import { Globe } from "lucide-react";
+import { useLocation } from "wouter";
+import { LANGUAGES } from "@/lib/translations";
 
 export function LanguageToggle() {
-  const { language, setLanguage } = useApp();
+  const { language } = useApp();
+  const [, navigate] = useLocation();
 
-  const toggleLang = () => {
-    setLanguage(language === "en" ? "es" : "en");
-  };
+  const currentLang = LANGUAGES.find(l => l.code === language);
 
   return (
     <Button
       variant="outline"
-      onClick={toggleLang}
-      className="w-full flex items-center justify-between px-4 py-6 border-slate-200 text-slate-700 bg-white hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 shadow-sm transition-all"
-      aria-label="Toggle language between English and Español"
+      onClick={() => navigate("/profile")}
+      className="w-full flex items-center gap-3 px-4 py-6 border-slate-200 text-slate-700 bg-white hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 shadow-sm transition-all"
+      aria-label="Change language"
     >
-      <span className={language === "en" ? "font-bold text-emerald-700" : "opacity-70"}>
-        English
+      <Globe className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+      <span className="font-bold text-emerald-700">
+        {currentLang?.flag} {currentLang?.nativeLabel}
       </span>
-      <span className="text-slate-300 mx-2">|</span>
-      <span className={language === "es" ? "font-bold text-emerald-700" : "opacity-70"}>
-        Español
-      </span>
+      <span className="ml-auto text-xs text-slate-400">Change</span>
     </Button>
   );
 }
