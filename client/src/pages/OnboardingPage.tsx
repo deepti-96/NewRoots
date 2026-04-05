@@ -251,7 +251,7 @@ export default function OnboardingPage() {
       </div>
       
       <p className="text-sm font-medium text-slate-500 bg-slate-100/50 border border-slate-200 rounded-xl p-4 text-center">
-        We don't store your documents. This is only used to show which steps you still need to complete.
+        {t(lang, "docsPrivacyNote")}
       </p>
     </div>,
 
