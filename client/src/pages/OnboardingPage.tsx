@@ -263,28 +263,28 @@ export default function OnboardingPage() {
       
       <div>
         <h2 className="text-3xl font-extrabold text-slate-900 mb-3">{t(lang, "setupComplete")}</h2>
-        <p className="text-slate-600 text-lg">Your personalized 90-day plan is ready.</p>
+        <p className="text-slate-600 text-lg">{t(lang, "planReady")}</p>
       </div>
 
       <div className="bg-white border-2 border-slate-100 rounded-2xl shadow-sm text-left max-w-sm mx-auto overflow-hidden">
         <div className="bg-slate-50 px-6 py-4 border-b border-slate-100">
-          <h3 className="font-bold text-slate-900 text-sm tracking-wide uppercase">Profile Summary</h3>
+          <h3 className="font-bold text-slate-900 text-sm tracking-wide uppercase">{t(lang, "profileSummaryTitle")}</h3>
         </div>
         <div className="p-6 space-y-4">
           <div className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-            <span className="text-slate-500 font-medium">Family members</span>
+            <span className="text-slate-500 font-medium">{t(lang, "summaryFamilyMembers")}</span>
             <span className="font-extrabold text-slate-900 text-lg">{familySize}</span>
           </div>
           <div className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-            <span className="text-slate-500 font-medium">State</span>
+            <span className="text-slate-500 font-medium">{t(lang, "summaryState")}</span>
             <span className="font-extrabold text-slate-900 text-lg">{state}</span>
           </div>
           <div className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-            <span className="text-slate-500 font-medium">Documents secured</span>
+            <span className="text-slate-500 font-medium">{t(lang, "summaryDocsSecured")}</span>
             <span className="font-extrabold text-slate-900 text-lg text-emerald-700">{selectedDocs.length}</span>
           </div>
           <div className="flex justify-between items-center bg-slate-50/50 p-2 rounded-lg">
-            <span className="text-slate-500 font-medium">Language</span>
+            <span className="text-slate-500 font-medium">{t(lang, "summaryLanguage")}</span>
             <span className="font-extrabold text-slate-900 text-lg">{LANGUAGES.find(l => l.code === lang)?.nativeLabel}</span>
           </div>
         </div>
