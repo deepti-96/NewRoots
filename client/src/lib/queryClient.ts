@@ -2,6 +2,27 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 const API_BASE = "__PORT_5000__".startsWith("__") ? "" : "__PORT_5000__";
 
+// Token getter — set by App.tsx once Auth0 is ready
+let _getToken: (() => Promise<string | null>) | null = null;
+
+export function setTokenGetter(fn: () => Promise<string | null>) {
+  _getToken = fn;
+}
+
+async function authHeaders(hasBody: boolean): Promise<HeadersInit> {
+  const headers: Record<string, string> = {};
+  if (hasBody) headers["Content-Type"] = "application/json";
+  if (_getToken) {
+    try {
+      const token = await _getToken();
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+    } catch {
+      // ignore — request will proceed without auth header
+    }
+  }
+  return headers;
+}
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -16,7 +37,7 @@ export async function apiRequest(
 ): Promise<Response> {
   const res = await fetch(`${API_BASE}${url}`, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers: await authHeaders(!!data),
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -33,6 +54,7 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const res = await fetch(`${API_BASE}${queryKey.join("/")}`, {
       credentials: "include",
+      headers: await authHeaders(false),
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
