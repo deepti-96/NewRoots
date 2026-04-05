@@ -152,7 +152,7 @@ export default function OnboardingPage() {
     <div key="1" className="space-y-6 animate-in slide-in-from-right duration-300">
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100">
         <h2 className="text-2xl font-bold text-slate-900 mb-2">{t(lang, "familySetup")}</h2>
-        <p className="text-base text-slate-600">Tell us about your family so we can personalize your plan.</p>
+        <p className="text-base text-slate-600">{t(lang, "familySetupSub")}</p>
       </div>
 
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 space-y-8">
@@ -205,7 +205,7 @@ export default function OnboardingPage() {
 
         {/* Arrival Date - Floating Label Style */}
         <div className="relative pt-2">
-          <label className="absolute -top-1 left-3 bg-white px-1 text-xs font-bold text-emerald-800 z-10">When did you arrive in the U.S.?</label>
+          <label className="absolute -top-1 left-3 bg-white px-1 text-xs font-bold text-emerald-800 z-10">{t(lang, "arrivalDateLabel")}</label>
           <input
             data-testid="input-arrival-date"
             type="date"
