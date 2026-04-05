@@ -1,6 +1,6 @@
-import { db, initDb } from "./db";
-import { users, milestones, taxReminders } from "@shared/schema";
-import type { User, InsertUser, Milestone, InsertMilestone, TaxReminder } from "@shared/schema";
+import { db, initDb } from "./db.js";
+import { users, milestones, taxReminders } from "../shared/schema.js";
+import type { User, InsertUser, Milestone, InsertMilestone, TaxReminder } from "../shared/schema.js";
 import { eq, and } from "drizzle-orm";
 
 let _initialized = false;
