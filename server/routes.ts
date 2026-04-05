@@ -131,7 +131,8 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     if (!req.file) return res.status(400).json({ error: "No audio file" });
     try {
       const form = new FormData();
-      form.append("file", new Blob([req.file.buffer], { type: req.file.mimetype }), req.file.originalname || "audio.webm");
+      const audioBlob = new Blob([new Uint8Array(req.file.buffer)], { type: req.file.mimetype });
+      form.append("file", audioBlob, req.file.originalname || "audio.webm");
       form.append("model_id", "scribe_v1");
       if (req.body.language_code) form.append("language_code", req.body.language_code);
       const upstream = await fetch("https://api.elevenlabs.io/v1/speech-to-text", {
@@ -144,6 +145,65 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       res.json({ text: data.text || "" });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // Agentic Chat — milestone Q&A powered by OpenAI + web search
+  // ---------------------------------------------------------------------------
+  app.post("/api/chat", async (req, res) => {
+    const { text, userId, milestoneContext } = req.body as {
+      text: string;
+      userId: number;
+      milestoneContext?: string;
+    };
+
+    if (!text || typeof text !== "string" || text.trim().length === 0) {
+      return res.status(400).json({ error: "No text provided" });
+    }
+    if (!userId || typeof userId !== "number") {
+      return res.status(400).json({ error: "No userId provided" });
+    }
+
+    try {
+      const { getAgentForUser } = await import("./agent");
+      const agent = getAgentForUser(userId);
+
+      // Inject user profile for personalized, state-specific answers
+      const userProfile = await storage.getUser(userId);
+      if (userProfile) {
+        agent.setUserContext({
+          username: userProfile.username,
+          language: userProfile.language || "en",
+          state: userProfile.state || null,
+          familySize: userProfile.familySize || null,
+          hasChildren: userProfile.hasChildren ?? null,
+          employmentStatus: userProfile.employmentStatus || null,
+          hasInsurance: userProfile.hasInsurance ?? null,
+          arrivalDate: userProfile.arrivalDate || null,
+        });
+      }
+
+      const reply = await agent.chat(text.trim(), milestoneContext);
+      res.json({ reply });
+    } catch (err: any) {
+      console.error("Chat error:", err?.message || err);
+      res.status(500).json({ error: err?.message || "Chat failed" });
+    }
+  });
+
+  // Clear conversation history for a user
+  app.post("/api/chat/clear", async (req, res) => {
+    const { userId } = req.body as { userId: number };
+    if (!userId) return res.status(400).json({ error: "No userId" });
+
+    try {
+      const { getAgentForUser } = await import("./agent");
+      const agent = getAgentForUser(userId);
+      agent.clearHistory();
+      res.json({ success: true });
+    } catch (err: any) {
+      res.status(500).json({ error: "Failed to clear history" });
     }
   });
 
