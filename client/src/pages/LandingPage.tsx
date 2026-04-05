@@ -51,10 +51,10 @@ export default function LandingPage() {
   }
 
   const features = [
-    { icon: Clock, title: "First 90 Days Plan", sub: "Step-by-step milestones tailored to your family" },
-    { icon: Globe, title: "10 Languages", sub: "Voice & text in your language" },
-    { icon: Heart, title: "Benefits Finder", sub: "Food, health, housing, and employment programs" },
-    { icon: Shield, title: "Tax Guidance", sub: "Reminders and free filing help near you" },
+    { icon: Clock, title: t(lang, "feature1Title"), sub: t(lang, "feature1Sub") },
+    { icon: Globe, title: t(lang, "feature2Title"), sub: t(lang, "feature2Sub") },
+    { icon: Heart, title: t(lang, "feature3Title"), sub: t(lang, "feature3Sub") },
+    { icon: Shield, title: t(lang, "feature4Title"), sub: t(lang, "feature4Sub") },
   ];
 
   const selectedLang = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];
@@ -126,7 +126,7 @@ export default function LandingPage() {
 
           <div className="inline-flex items-center gap-2 day-badge rounded-full px-4 py-1.5 text-sm font-semibold mb-8">
             <Clock className="w-4 h-4" />
-            First 90 Days — Day by Day
+            {t(lang, "heroBadge")}
           </div>
 
           <button
@@ -161,8 +161,8 @@ export default function LandingPage() {
 
       {/* Features */}
       <section className="max-w-lg mx-auto px-5 py-12">
-        <h2 className="text-xl font-bold text-center mb-2">What NewRoots does for you</h2>
-        <p className="text-sm text-muted-foreground text-center mb-8">A guided caseworker in your pocket. Not a search engine.</p>
+        <h2 className="text-xl font-bold text-center mb-2">{t(lang, "featuresTitle")}</h2>
+        <p className="text-sm text-muted-foreground text-center mb-8">{t(lang, "featuresSub")}</p>
         <div className="grid grid-cols-2 gap-3">
           {features.map(({ icon: Icon, title, sub }) => (
             <div key={title} className="bg-card border border-border rounded-2xl p-4 card-lift">
@@ -179,24 +179,24 @@ export default function LandingPage() {
       {/* Journey preview */}
       <section className="bg-muted/50 px-5 py-10">
         <div className="max-w-lg mx-auto">
-          <h2 className="text-xl font-bold text-center mb-2">Your first 90 days, step by step</h2>
-          <p className="text-sm text-muted-foreground text-center mb-6">We help you know what to do first, what documents you need, and where to get help.</p>
+          <h2 className="text-xl font-bold text-center mb-2">{t(lang, "journeyTitle")}</h2>
+          <p className="text-sm text-muted-foreground text-center mb-6">{t(lang, "journeySub")}</p>
           <div className="space-y-3">
             {[
-              { week: "Week 1", items: ["Get phone/SIM card", "Get mailing address", "Download I-94 record"] },
-              { week: "Week 2", items: ["Apply for SSN", "Open bank account", "Get health insurance"] },
-              { week: "Week 3–4", items: ["Apply for SNAP food benefits", "Enroll children in school", "Find WIC if applicable"] },
-              { week: "Month 2–3", items: ["Get state ID / Driver's license", "Apply for ITIN if needed", "Prepare for tax filing"] },
-            ].map(({ week, items }) => (
-              <div key={week} className="bg-card border border-border rounded-xl p-4">
+              { weekKey: "journeyWeek1" as const, itemKeys: ["journeyItem_w1_1", "journeyItem_w1_2", "journeyItem_w1_3"] as const },
+              { weekKey: "journeyWeek2" as const, itemKeys: ["journeyItem_w2_1", "journeyItem_w2_2", "journeyItem_w2_3"] as const },
+              { weekKey: "journeyWeek34" as const, itemKeys: ["journeyItem_w34_1", "journeyItem_w34_2", "journeyItem_w34_3"] as const },
+              { weekKey: "journeyMonth23" as const, itemKeys: ["journeyItem_m23_1", "journeyItem_m23_2", "journeyItem_m23_3"] as const },
+            ].map(({ weekKey, itemKeys }) => (
+              <div key={weekKey} className="bg-card border border-border rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-bold bg-primary/10 text-primary rounded-full px-2.5 py-0.5">{week}</span>
+                  <span className="text-xs font-bold bg-primary/10 text-primary rounded-full px-2.5 py-0.5">{t(lang, weekKey)}</span>
                 </div>
                 <div className="space-y-1">
-                  {items.map(item => (
-                    <div key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
+                  {itemKeys.map(key => (
+                    <div key={key} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary/50 flex-shrink-0" />
-                      {item}
+                      {t(lang, key)}
                     </div>
                   ))}
                 </div>
@@ -209,8 +209,8 @@ export default function LandingPage() {
       {/* Footer CTA */}
       <section className="hero-gradient text-white px-5 py-12">
         <div className="max-w-lg mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-3">Ready to start your journey?</h2>
-          <p className="text-white/80 text-sm mb-6">Free to use. Available in 10 languages. No documents required to sign up.</p>
+          <h2 className="text-2xl font-bold mb-3">{t(lang, "footerCtaTitle")}</h2>
+          <p className="text-white/80 text-sm mb-6">{t(lang, "footerCtaSub")}</p>
           <Button
             data-testid="btn-start-footer"
             onClick={handleGetStarted}
