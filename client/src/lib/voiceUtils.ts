@@ -1,4 +1,5 @@
 import type { Language } from "./translations";
+import { apiRequest } from "./queryClient";
 
 // BCP-47 codes — used by VoiceInput (STT) and Web Speech API fallback
 const LANGUAGE_CODES: Record<Language, string> = {
@@ -67,7 +68,6 @@ export async function speakText(
   releaseActiveAudio();
 
   try {
-    const { apiRequest } = await import("./queryClient");
     const response = await apiRequest("POST", "/api/tts", {
       text,
       voiceId: ELEVENLABS_VOICE_IDS[lang],
