@@ -1,4 +1,5 @@
 import type { Language } from "./translations";
+import { getToken } from "./queryClient";
 
 // BCP-47 codes — used by VoiceInput (STT) and Web Speech API fallback
 const LANGUAGE_CODES: Record<Language, string> = {
@@ -166,7 +167,9 @@ export class ElevenLabsVoiceInput {
           formData.append("language_code", LANGUAGE_CODES[this.lang].split("-")[0]);
           // Use raw fetch — apiRequest forces Content-Type: application/json,
           // but FormData needs multipart/form-data with a browser-generated boundary
-          const res = await fetch("/api/stt", { method: "POST", body: formData });
+          const token = await getToken();
+          const sttHeaders: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+          const res = await fetch("/api/stt", { method: "POST", headers: sttHeaders, body: formData, credentials: "include" });
           if (!res.ok) throw new Error(await res.text());
           const data = await res.json() as { text: string };
           this.onResult(data.text);
