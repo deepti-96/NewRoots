@@ -17,6 +17,7 @@ createRoot(document.getElementById("root")!).render(
     clientId="V7rf7lgchZ9QmHPpKlJA8hYbzWAOqbnE"
     authorizationParams={{
       redirect_uri: window.location.origin + window.location.pathname,
+      audience: "https://new-roots-kappa.vercel.app",
     }}
     onRedirectCallback={onRedirectCallback}
     cacheLocation="memory"

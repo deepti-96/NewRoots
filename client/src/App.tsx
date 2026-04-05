@@ -5,7 +5,7 @@ import { queryClient } from "@/lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, setTokenGetter } from "@/lib/queryClient";
 import type { Language } from "@/lib/translations";
 
 import LandingPage from "@/pages/LandingPage";
@@ -85,7 +85,14 @@ export default function App() {
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [syncing, setSyncing] = useState(false);
 
-  const { isAuthenticated, isLoading, user: auth0User } = useAuth0();
+  const { isAuthenticated, isLoading, user: auth0User, getAccessTokenSilently } = useAuth0();
+
+  // Wire Auth0 token into apiRequest as soon as the user is authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      setTokenGetter(() => getAccessTokenSilently().catch(() => null));
+    }
+  }, [isAuthenticated, getAccessTokenSilently]);
 
   const syncAuth0User = useCallback(async () => {
     if (!auth0User || syncing || user) return;
