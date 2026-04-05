@@ -1,4 +1,5 @@
 import { useApp } from "@/App";
+import { t } from "@/lib/translations";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { 
@@ -15,26 +16,27 @@ import { Badge } from "@/components/ui/badge";
 const CATEGORIES = [
   {
     id: "identity",
-    title: "Identity & Legal",
+    title: "docCat1",
     icon: User,
     docs: ["Passport", "Visa", "I-94 Form", "Social Security Number", "Birth Certificate"]
   },
   {
     id: "housing",
-    title: "Housing & Residence",
+    title: "docCat2",
     icon: Home,
     docs: ["Lease Agreement", "Utility Bill"]
   },
   {
     id: "finance",
-    title: "Health & Finance",
+    title: "docCat3",
     icon: Heart,
     docs: ["Medical Records", "Immunization records", "Bank Statement", "Employment Authorization (EAD)"]
   }
 ];
 
 export default function DocumentsPage() {
-  const { user } = useApp();
+  const { user, language } = useApp();
+  const lang = language;
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -95,19 +97,19 @@ export default function DocumentsPage() {
             <div className="p-2 bg-emerald-100 rounded-lg text-emerald-700 shadow-sm">
               <FileText className="w-6 h-6" />
             </div>
-            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100">Official Records</Badge>
+            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100">{t(lang, "officialRecords")}</Badge>
           </div>
-          <h1 className="text-slate-900 text-4xl font-black tracking-tight">My Documents</h1>
-          <p className="text-slate-500 text-lg max-w-md">Keep track of the paperwork you'll need for your first 90 days in the U.S.</p>
+          <h1 className="text-slate-900 text-4xl font-black tracking-tight">{t(lang, "navDocuments")}</h1>
+          <p className="text-slate-500 text-lg max-w-md">{t(lang, "documentsSub")}</p>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xl shadow-slate-200/50 min-w-[300px]">
           <div className="flex justify-between items-center mb-3">
-            <span className="text-sm font-bold text-slate-800 uppercase tracking-wider">Checklist Progress</span>
+            <span className="text-sm font-bold text-slate-800 uppercase tracking-wider">{t(lang, "checklistProgress")}</span>
             <span className="text-2xl font-black text-emerald-600">{progressPercent}%</span>
           </div>
           <Progress value={progressPercent} className="h-3 bg-slate-100 mb-2" />
-          <p className="text-xs text-slate-500 font-medium">{securedCount} of {totalPossibleDocs} documents verified</p>
+          <p className="text-xs text-slate-500 font-medium">{securedCount} of {totalPossibleDocs} {t(lang, "documentsVerified")}</p>
         </div>
       </div>
 
@@ -116,7 +118,7 @@ export default function DocumentsPage() {
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
         <input 
           disabled
-          placeholder="Search your documents..." 
+          placeholder={t(lang, "searchDocuments")} 
           className="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-slate-400 cursor-not-allowed shadow-sm"
         />
       </div>
@@ -128,7 +130,7 @@ export default function DocumentsPage() {
               <div className="p-2 bg-slate-100 rounded-xl text-slate-600">
                 <category.icon className="w-5 h-5" />
               </div>
-              <h2 className="text-xl font-bold text-slate-800">{category.title}</h2>
+              <h2 className="text-xl font-bold text-slate-800">{t(lang, category.title as any)}</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -164,16 +166,16 @@ export default function DocumentsPage() {
                         {isSecured ? (
                           <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border border-emerald-100/50">
                             <CheckCircle2 className="w-3 h-3" />
-                            Verified
+                            {t(lang, "verified")}
                           </div>
                         ) : isUploading ? (
                           <div className="flex items-center gap-2 bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border border-amber-100">
                              <Loader2 className="w-3 h-3 animate-spin" />
-                             Verifying
+                             {t(lang, "verifying")}
                           </div>
                         ) : (
                           <div className="flex items-center gap-2 bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border border-slate-200 group-hover:bg-emerald-100 group-hover:text-emerald-700 group-hover:border-emerald-200 transition-colors">
-                            Missing
+                            {t(lang, "missing")}
                           </div>
                         )}
                       </div>
@@ -183,7 +185,7 @@ export default function DocumentsPage() {
                           {doc}
                         </h3>
                         <p className={`text-xs font-medium transition-colors ${isSecured ? "text-emerald-600/70" : "text-slate-400 group-hover:text-emerald-600/70"}`}>
-                          {isSecured ? "ID: #" + Math.random().toString(36).substr(2, 6).toUpperCase() : "Required for your journey"}
+                          {isSecured ? "ID: #" + Math.random().toString(36).substr(2, 6).toUpperCase() : t(lang, "requiredForJourney")}
                         </p>
                       </div>
 
@@ -191,7 +193,7 @@ export default function DocumentsPage() {
                       {!isSecured && !isUploading && (
                         <div className="pt-2 flex items-center gap-2 text-emerald-600 font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
                           <CheckCircle2 className="w-4 h-4" />
-                          <span>Mark as Present</span>
+                          <span>{t(lang, "markAsPresent")}</span>
                         </div>
                       )}
                     </div>
@@ -209,9 +211,9 @@ export default function DocumentsPage() {
           <AlertCircle className="w-10 h-10 text-emerald-500" />
         </div>
         <div className="space-y-3">
-          <h4 className="text-xl font-black text-slate-900 leading-tight">Why is this checklist important?</h4>
+          <h4 className="text-xl font-black text-slate-900 leading-tight">{t(lang, "whyChecklistTitle")}</h4>
           <p className="text-slate-500 font-medium leading-relaxed max-w-2xl">
-            Having these documents ready will help you qualify for health insurance, bank accounts, and other essential benefits faster. We use this checklist to automatically update your journey progress.
+            {t(lang, "whyChecklistBody")}
           </p>
         </div>
       </div>
