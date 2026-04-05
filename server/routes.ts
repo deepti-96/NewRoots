@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { type Server } from "http";
-import { storage } from "./storage";
-import { insertUserSchema } from "@shared/schema";
+import { storage } from "./storage.js";
+import { insertUserSchema } from "../shared/schema.js";
 import multer from "multer";
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
