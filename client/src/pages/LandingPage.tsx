@@ -83,9 +83,7 @@ export default function LandingPage() {
       {/* Navbar */}
       <nav className="w-full flex items-center justify-between px-6 lg:px-12 py-6 max-w-7xl mx-auto">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-800 text-white flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-emerald-50">
-            N
-          </div>
+          <HeartHandshake className="w-9 h-9 text-emerald-600" strokeWidth={1.75} />
           <span className="font-extrabold text-2xl tracking-tighter text-slate-900">NewRoots</span>
         </div>
 
