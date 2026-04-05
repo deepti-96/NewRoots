@@ -3,6 +3,7 @@ import { t, LANGUAGES, type Language } from "@/lib/translations";
 import AppNav from "@/components/AppNav";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
+import { useAuth0 } from "@auth0/auth0-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { LogOut, Globe, User, MapPin, Users, Briefcase, Shield, FileText } from "lucide-react";
@@ -23,9 +24,11 @@ export default function ProfilePage() {
     enabled: !!user,
   });
 
+  const { logout: auth0Logout } = useAuth0();
+
   function logout() {
     setUser(null);
-    navigate("/");
+    auth0Logout({ logoutParams: { returnTo: window.location.origin + window.location.pathname } });
   }
 
   const selectedLang = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];
