@@ -4,12 +4,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import AppNav from "@/components/AppNav";
 import VoiceButton from "@/components/VoiceButton";
+import AgentChatWidget from "@/components/AgentChatWidget";
 import { MILESTONES, getMilestoneTitle, getMilestoneDescription, getMilestoneTips } from "@/lib/milestoneData";
-import { Check, Clock, AlertCircle, ChevronDown, ChevronUp, ExternalLink, Mic } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { Check, Clock, AlertCircle, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ElevenLabsVoiceInput, speakText } from "@/lib/voiceUtils";
 
 interface Milestone {
   id: number;
@@ -26,8 +26,6 @@ export default function DashboardPage() {
   const qc = useQueryClient();
   const lang = language;
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
-  const [voiceText, setVoiceText] = useState("");
-  const [listening, setListening] = useState(false);
 
   // Redirect to login if no user
   useEffect(() => {
@@ -67,12 +65,13 @@ export default function DashboardPage() {
   const totalCount = MILESTONES.length;
   const completionPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
-  // Group by week
+  // Group by week/phase
   const weeks = [
-    { label: "Week 1 — First Days", range: [1, 1] },
-    { label: "Week 2 — Key Paperwork", range: [2, 2] },
-    { label: "Week 3–4 — Benefits & Family", range: [3, 4] },
-    { label: "Month 2–3 — Getting Settled", range: [5, 13] },
+    { label: "Week 1 — First 72 Hours", range: [1, 1] },
+    { label: "Week 2 — Key Paperwork & Identity", range: [2, 2] },
+    { label: "Week 3–4 — Benefits & Legal Compliance", range: [3, 4] },
+    { label: "Month 2 — Employment & Self-Sufficiency", range: [5, 7] },
+    { label: "Month 3 — Stability & Integration", range: [8, 13] },
   ];
 
   function getMilestonesForWeekRange(min: number, max: number) {
@@ -85,28 +84,7 @@ export default function DashboardPage() {
     optional: "text-muted-foreground bg-muted",
   };
 
-  // Voice input — ElevenLabs Scribe STT via MediaRecorder
-  // useRef keeps the instance stable across renders so stop() actually reaches the recorder
-  const voiceInputRef = useRef<ElevenLabsVoiceInput | null>(null);
-  function startVoiceInput() {
-    if (listening) {
-      voiceInputRef.current?.stop();
-      // onEnd callback handles setListening(false)
-      return;
-    }
-    voiceInputRef.current = new ElevenLabsVoiceInput({
-      lang,
-      onResult: (text: string) => {
-        setVoiceText(text);
-        // TODO (teammate): replace speakText(text, lang) with LLM call → speak the answer
-        speakText(text, lang);
-      },
-      onStart: () => setListening(true),
-      onEnd: () => setListening(false),
-      onError: (err: string) => { console.error("STT error:", err); setListening(false); },
-    });
-    voiceInputRef.current.start();
-  }
+  // Voice input is now handled by AgentChatWidget (floating bottom-right chatbot)
 
   if (!user) return null;
 
@@ -171,23 +149,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Voice note input */}
-        <div className="bg-muted/50 border border-border rounded-2xl p-4 mb-5">
-          <div className="flex items-center gap-3">
-            <button
-              data-testid="btn-voice-input"
-              onClick={startVoiceInput}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${listening ? "bg-red-500 text-white pulse-urgent" : "bg-primary/10 text-primary hover:bg-primary/20"}`}
-            >
-              <Mic className="w-5 h-5" />
-            </button>
-            <div className="flex-1">
-              <p className="text-sm font-medium">{listening ? t(lang, "stopListening") : t(lang, "listenAndSpeak")}</p>
-              {voiceText && <p className="text-xs text-muted-foreground mt-0.5">"{voiceText}"</p>}
-              {!voiceText && !listening && <p className="text-xs text-muted-foreground">Ask a question or tell us what you need help with</p>}
-            </div>
-          </div>
-        </div>
+        {/* Voice/Chat interaction is now handled by the floating AgentChatWidget */}
 
         {/* Milestone weeks */}
         <h2 className="font-bold text-base mb-3">{t(lang, "milestones")}</h2>
@@ -320,6 +282,9 @@ export default function DashboardPage() {
           })}
         </div>
       </main>
+
+      {/* Floating Agentic Chat Widget */}
+      <AgentChatWidget />
     </div>
   );
 }
