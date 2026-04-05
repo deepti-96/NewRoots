@@ -222,7 +222,7 @@ export default function OnboardingPage() {
     <div key="2" className="space-y-6 animate-in slide-in-from-right duration-300">
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100">
         <h2 className="text-2xl font-bold text-slate-900 mb-2">{t(lang, "whatDocuments")}</h2>
-        <p className="text-base text-slate-600">Check all the documents you currently have. This helps us personalize your journey.</p>
+        <p className="text-base text-slate-600">{t(lang, "whatDocumentsSub")}</p>
       </div>
 
       <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3">
