@@ -107,7 +107,10 @@ export default function App() {
         language: (dbUser.language as Language) || "en",
         profileComplete: dbUser.profileComplete,
       });
-      if (dbUser.language && dbUser.language !== "en") {
+      // Only apply the DB language if the user hasn't manually picked one
+      // (i.e. localStorage is still the default "en" or unset)
+      const storedLang = localStorage.getItem("newroots_lang");
+      if (dbUser.language && (!storedLang || storedLang === "en")) {
         setLanguage(dbUser.language as Language);
       }
     } catch (err) {

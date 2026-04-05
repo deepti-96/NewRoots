@@ -26,6 +26,8 @@ export default function ProfilePage() {
 
   function logout() {
     setUser(null);
+    localStorage.removeItem("newroots_lang");
+    setLanguage("en");
     auth0Logout({ 
       logoutParams: { 
         returnTo: window.location.origin 
