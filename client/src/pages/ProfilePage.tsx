@@ -26,7 +26,11 @@ export default function ProfilePage() {
 
   function logout() {
     setUser(null);
-    auth0Logout({ logoutParams: { returnTo: window.location.origin + window.location.pathname } });
+    auth0Logout({ 
+      logoutParams: { 
+        returnTo: window.location.origin 
+      } 
+    });
   }
 
   if (!user) return null;
