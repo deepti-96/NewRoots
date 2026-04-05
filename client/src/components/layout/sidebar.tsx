@@ -12,16 +12,22 @@ import {
   Settings,
   HelpCircle
 } from "lucide-react";
-import { LanguageToggle } from "@/components/ui/language-toggle";
+import { useAuth0 } from "@auth0/auth0-react";
 import { useApp } from "@/App";
+import { LanguageToggle } from "@/components/ui/language-toggle";
 
 export function Sidebar() {
   const [location, navigate] = useLocation();
   const { language, setUser } = useApp();
+  const { logout: auth0Logout } = useAuth0();
 
   function logout() {
     setUser(null);
-    navigate("/");
+    auth0Logout({ 
+      logoutParams: { 
+        returnTo: window.location.origin 
+      } 
+    });
   }
 
   const navGroups = [
