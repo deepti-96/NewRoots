@@ -132,7 +132,7 @@ export default function LandingPage() {
         <div className="lg:col-span-6 space-y-10">
           <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 rounded-full px-5 py-2 text-sm font-bold border border-emerald-100/50 shadow-sm">
             <Shield className="w-4 h-4" />
-            TRUSTED BY 10,000+ FAMILIES
+            {t(lang, "trustedBadge")}
           </div>
 
           <h1 className="text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight text-slate-900">
@@ -171,21 +171,21 @@ export default function LandingPage() {
              {/* Header */}
              <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900">Family Setup Map</h3>
-                  <p className="text-slate-500 font-medium">Clear your blockers step-by-step.</p>
+                  <h3 className="text-2xl font-black text-slate-900">{t(lang, "heroCardTitle")}</h3>
+                  <p className="text-slate-500 font-medium">{t(lang, "heroCardSub")}</p>
                 </div>
                 <div className="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-full text-xs font-bold ring-1 ring-emerald-100">
-                  50% READY
+                  {t(lang, "heroCardReady")}
                 </div>
              </div>
 
              {/* Checklist Items */}
              <div className="space-y-4">
                 {[
-                  { label: "Download Your I-94 Record", sub: "Required for state IDs and work auth.", done: true },
-                  { label: "Apply for a Social Security Number", sub: "Essential for employment and taxes.", done: true },
-                  { label: "Register for Medicaid", sub: "Health coverage for your family.", done: false },
-                  { label: "Apply for SNAP (Food Stamps)", sub: "Monthly food assistance.", done: false },
+                  { labelKey: "heroCard_item1_label" as const, subKey: "heroCard_item1_sub" as const, done: true },
+                  { labelKey: "heroCard_item2_label" as const, subKey: "heroCard_item2_sub" as const, done: true },
+                  { labelKey: "heroCard_item3_label" as const, subKey: "heroCard_item3_sub" as const, done: false },
+                  { labelKey: "heroCard_item4_label" as const, subKey: "heroCard_item4_sub" as const, done: false },
                 ].map((item, idx) => (
                   <div key={idx} className={`p-5 rounded-2xl border transition-all duration-300 ${item.done ? "bg-slate-50/50 border-slate-100 opacity-80" : "bg-white border-slate-200 shadow-sm"}`}>
                     <div className="flex items-start gap-4">
@@ -193,8 +193,8 @@ export default function LandingPage() {
                         {item.done && <CheckCircle2 className="w-4 h-4" />}
                       </div>
                       <div>
-                        <h4 className={`font-bold text-sm leading-tight ${item.done ? "text-slate-600" : "text-slate-900"}`}>{item.label}</h4>
-                        <p className="text-xs text-slate-400 mt-1 font-medium">{item.sub}</p>
+                        <h4 className={`font-bold text-sm leading-tight ${item.done ? "text-slate-600" : "text-slate-900"}`}>{t(lang, item.labelKey)}</h4>
+                        <p className="text-xs text-slate-400 mt-1 font-medium">{t(lang, item.subKey)}</p>
                       </div>
                     </div>
                   </div>
@@ -252,7 +252,7 @@ export default function LandingPage() {
            <div className="lg:col-span-7 space-y-8 order-1 lg:order-2">
               <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 rounded-full px-5 py-2 text-xs font-black tracking-widest uppercase border border-emerald-100">
                 <HeartHandshake className="w-4 h-4" />
-                BUILT WITH COMPASSION
+                {t(lang, "builtWithCompassion")}
               </div>
               
               <h2 className="text-5xl font-black text-slate-900 tracking-tight leading-[1.1]">
@@ -304,10 +304,10 @@ export default function LandingPage() {
 
               <div className="space-y-12 w-full">
                 {[
-                  { weekKey: "journeyWeek1" as const, title: "Immediate Setup", itemKeys: ["journeyItem_w1_1", "journeyItem_w1_2", "journeyItem_w1_3"] as const },
-                  { weekKey: "journeyWeek2" as const, title: "Identity & Finance", itemKeys: ["journeyItem_w2_1", "journeyItem_w2_2", "journeyItem_w2_3"] as const },
-                  { weekKey: "journeyWeek34" as const, title: "Benefits & School", itemKeys: ["journeyItem_w34_1", "journeyItem_w34_2", "journeyItem_w34_3"] as const },
-                  { weekKey: "journeyMonth23" as const, title: "Long-term Stability", itemKeys: ["journeyItem_m23_1", "journeyItem_m23_2", "journeyItem_m23_3"] as const },
+                  { weekKey: "journeyWeek1" as const, titleKey: "timeline_title1" as const, itemKeys: ["journeyItem_w1_1", "journeyItem_w1_2", "journeyItem_w1_3"] as const },
+                  { weekKey: "journeyWeek2" as const, titleKey: "timeline_title2" as const, itemKeys: ["journeyItem_w2_1", "journeyItem_w2_2", "journeyItem_w2_3"] as const },
+                  { weekKey: "journeyWeek34" as const, titleKey: "timeline_title3" as const, itemKeys: ["journeyItem_w34_1", "journeyItem_w34_2", "journeyItem_w34_3"] as const },
+                  { weekKey: "journeyMonth23" as const, titleKey: "timeline_title4" as const, itemKeys: ["journeyItem_m23_1", "journeyItem_m23_2", "journeyItem_m23_3"] as const },
                 ].map((item, idx) => (
                   <div key={idx} className="flex gap-10 items-start relative group">
                     {/* Bullet */}
@@ -317,7 +317,7 @@ export default function LandingPage() {
                       <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-block mb-4 border border-emerald-100">
                         {t(lang, item.weekKey)}
                       </div>
-                      <h4 className="text-xl font-bold text-slate-900 mb-6">{item.title}</h4>
+                      <h4 className="text-xl font-bold text-slate-900 mb-6">{t(lang, item.titleKey)}</h4>
                       <div className="space-y-3">
                          {item.itemKeys.map((key) => (
                            <div key={key} className="flex items-center gap-3 text-slate-600 font-medium">
@@ -340,16 +340,16 @@ export default function LandingPage() {
               
               <div className="bg-white rounded-[2rem] p-10 shadow-[0_32px_120px_-24px_rgba(0,0,0,0.1)] border border-slate-50 relative">
                  <div className="flex items-center justify-between mb-10">
-                   <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">ACTION ITEMS</h3>
-                   <span className="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest">5/7 Complete</span>
+                   <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t(lang, "actionItemsTitle")}</h3>
+                   <span className="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest">{t(lang, "actionItemsComplete")}</span>
                  </div>
 
                  <div className="space-y-6">
                     {[
-                      { label: "Identity Verification", time: "Completed yesterday", done: true },
-                      { label: "Link Primary Bank", time: "Completed 4:45 PM", done: true },
-                      { label: "Set Up Automated Savings", time: "Pending your review.", active: true },
-                      { label: "Security Settings", time: "Locked", faded: true },
+                      { labelKey: "action_item1_label" as const, timeKey: "action_item1_time" as const, done: true },
+                      { labelKey: "action_item2_label" as const, timeKey: "action_item2_time" as const, done: true },
+                      { labelKey: "action_item3_label" as const, timeKey: "action_item3_time" as const, active: true },
+                      { labelKey: "action_item4_label" as const, timeKey: "action_item4_time" as const, faded: true },
                     ].map((item, idx) => (
                       <div key={idx} className={`relative flex items-start gap-4 ${item.faded ? "opacity-30" : "opacity-100"}`}>
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center mt-1 flex-shrink-0 ${item.done ? "bg-emerald-600 text-white" : item.active ? "ring-2 ring-emerald-600 ring-offset-2" : "border-2 border-slate-200"}`}>
@@ -357,11 +357,11 @@ export default function LandingPage() {
                            {item.active && <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>}
                         </div>
                         <div className="flex-1">
-                           <h4 className="font-bold text-slate-900 leading-tight">{item.label}</h4>
-                           <p className="text-xs text-slate-400 font-medium mt-1 mb-2">{item.time}</p>
+                           <h4 className="font-bold text-slate-900 leading-tight">{t(lang, item.labelKey)}</h4>
+                           <p className="text-xs text-slate-400 font-medium mt-1 mb-2">{t(lang, item.timeKey)}</p>
                            {item.active && (
                              <button className="text-xs font-black text-emerald-700 hover:text-emerald-800 transition-colors flex items-center gap-1 group/btn">
-                               Review Settings <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                               {t(lang, "action_item3_cta")} <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
                              </button>
                            )}
                         </div>
@@ -404,7 +404,7 @@ export default function LandingPage() {
               variant="outline"
               className="bg-transparent border-emerald-700 text-white hover:bg-emerald-800 font-bold px-10 py-6 rounded-2xl h-auto text-lg transition-all active:scale-95"
             >
-              Contact Support
+              {t(lang, "contactSupport")}
             </Button>
           </div>
         </div>
