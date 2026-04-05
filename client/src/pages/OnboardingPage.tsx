@@ -272,7 +272,7 @@ export default function OnboardingPage() {
             value={String(selectedMonth)}
             onValueChange={(value) => updateArrivalDate(selectedYear, Number(value), selectedDay)}
           >
-            <SelectTrigger data-testid="select-arrival-month" className="h-14 rounded-xl border-2 border-slate-200 px-4 text-base font-medium">
+            <SelectTrigger data-testid="select-arrival-month" className="h-14 rounded-xl border-2 border-slate-200 bg-white px-4 text-base font-medium text-slate-900">
               <SelectValue placeholder="Month" />
             </SelectTrigger>
             <SelectContent>
@@ -288,7 +288,7 @@ export default function OnboardingPage() {
             value={String(selectedDay)}
             onValueChange={(value) => updateArrivalDate(selectedYear, selectedMonth, Number(value))}
           >
-            <SelectTrigger data-testid="select-arrival-day" className="h-14 rounded-xl border-2 border-slate-200 px-4 text-base font-medium">
+            <SelectTrigger data-testid="select-arrival-day" className="h-14 rounded-xl border-2 border-slate-200 bg-white px-4 text-base font-medium text-slate-900">
               <SelectValue placeholder="Day" />
             </SelectTrigger>
             <SelectContent>
@@ -304,7 +304,7 @@ export default function OnboardingPage() {
             value={String(selectedYear)}
             onValueChange={(value) => updateArrivalDate(Number(value), selectedMonth, selectedDay)}
           >
-            <SelectTrigger data-testid="select-arrival-year" className="h-14 rounded-xl border-2 border-slate-200 px-4 text-base font-medium">
+            <SelectTrigger data-testid="select-arrival-year" className="h-14 rounded-xl border-2 border-slate-200 bg-white px-4 text-base font-medium text-slate-900">
               <SelectValue placeholder="Year" />
             </SelectTrigger>
             <SelectContent>
@@ -316,6 +316,7 @@ export default function OnboardingPage() {
             </SelectContent>
           </Select>
         </div>
+      </div>
       </div>
     </div>,
 
