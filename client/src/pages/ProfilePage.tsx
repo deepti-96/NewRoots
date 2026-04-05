@@ -183,11 +183,11 @@ export default function ProfilePage() {
             <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest mb-6">{t(lang, "externalSupportLinks")}</h3>
             <div className="bg-white border border-slate-100 rounded-3xl p-2 shadow-sm">
               {[
-                { label: "USAGov — Find Benefits", url: "https://www.usa.gov/benefits" },
-                { label: "Benefits.gov", url: "https://www.benefits.gov" },
-                { label: "Healthcare.gov for Immigrants", url: "https://www.healthcare.gov/immigrants/" },
-                { label: "IRS Free Tax Help", url: "https://www.irs.gov/individuals/free-tax-return-preparation-for-you-by-volunteers" },
-                { label: "American Job Center", url: "https://www.careeronestop.org/LocalHelp/local-help.aspx" },
+                { label: t(lang, "link_usagov"), url: "https://www.usa.gov/benefits" },
+                { label: t(lang, "link_benefitsgov"), url: "https://www.benefits.gov" },
+                { label: t(lang, "link_healthcaregov"), url: "https://www.healthcare.gov/immigrants/" },
+                { label: t(lang, "link_irs"), url: "https://www.irs.gov/individuals/free-tax-return-preparation-for-you-by-volunteers" },
+                { label: t(lang, "link_jobcenter"), url: "https://www.careeronestop.org/LocalHelp/local-help.aspx" },
               ].map(({ label, url }) => (
                 <a
                   key={url}
