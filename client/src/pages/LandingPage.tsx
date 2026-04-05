@@ -208,14 +208,13 @@ export default function LandingPage() {
                 ))}
              </div>
 
-             {/* Right side slider handle hint */}
-             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-16 bg-slate-100 rounded-l-full"></div>
+
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="bg-white py-24 overflow-hidden border-y border-slate-50">
+      <section className="bg-slate-50/60 py-24 overflow-hidden border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
            
            {/* Left Illustration: My Benefits */}
@@ -277,7 +276,7 @@ export default function LandingPage() {
                   { icon: Heart, titleKey: "feature3Title" as const, subKey: "feature3Sub" as const, color: "text-rose-600", bg: "bg-rose-50" },
                   { icon: Shield, titleKey: "feature4Title" as const, subKey: "feature4Sub" as const, color: "text-blue-600", bg: "bg-blue-50" },
                 ].map((item, idx) => (
-                  <div key={idx} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all group">
+                  <div key={idx} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.12)] transition-all group">
                     <div className={`w-12 h-12 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-transform`}>
                       <item.icon className="w-6 h-6" />
                     </div>
@@ -320,7 +319,7 @@ export default function LandingPage() {
                     {/* Bullet */}
                     <div className="w-8 h-8 rounded-full bg-white border-[3px] border-emerald-500 shadow-[0_0_0_4px_rgba(16,185,129,0.1)] flex-shrink-0 z-10 transition-transform group-hover:scale-125"></div>
                     
-                    <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all flex-1">
+                    <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm transition-all flex-1">
                       <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-block mb-4 border border-emerald-100">
                         {t(lang, item.weekKey)}
                       </div>
@@ -345,7 +344,7 @@ export default function LandingPage() {
            <div className="lg:col-span-5 sticky top-32">
               <div className="absolute inset-0 bg-slate-50/50 rounded-full blur-[80px] -z-10 translate-x-12 translate-y-24"></div>
               
-              <div className="bg-white rounded-[2rem] p-10 shadow-[0_32px_120px_-24px_rgba(0,0,0,0.1)] border border-slate-50 relative">
+              <div className="bg-white rounded-[2rem] p-10 shadow-sm border border-slate-100 relative">
                  <div className="flex items-center justify-between mb-10">
                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t(lang, "actionItemsTitle")}</h3>
                    <span className="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest">{t(lang, "actionItemsComplete")}</span>
