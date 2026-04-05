@@ -4,6 +4,7 @@ import { useApp } from "@/App";
 import { apiRequest } from "@/lib/queryClient";
 import { ElevenLabsVoiceInput, speakText, stopSpeaking } from "@/lib/voiceUtils";
 import type { Language } from "@/lib/translations";
+import ReactMarkdown from "react-markdown";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -176,7 +177,11 @@ export default function AgentChatWidget() {
                     ? "bg-primary text-primary-foreground rounded-br-md"
                     : "bg-muted text-foreground rounded-bl-md"
                 }`}>
-                  <p className="whitespace-pre-wrap">{msg.content}</p>
+                  <div className="prose prose-sm w-full break-words max-w-none dark:prose-invert prose-p:leading-relaxed prose-pre:p-0">
+                    <ReactMarkdown>
+                      {msg.content}
+                    </ReactMarkdown>
+                  </div>
                   {msg.role === "assistant" && (
                     <button
                       onClick={() => speakMessage(msg.content, i)}
