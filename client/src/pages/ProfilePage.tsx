@@ -2,6 +2,7 @@ import { useApp } from "@/App";
 import { t, LANGUAGES, type Language } from "@/lib/translations";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
+import { useAuth0 } from "@auth0/auth0-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { LogOut, Globe, MapPin, Users, Briefcase, Shield, FileText, CheckCircle2, ChevronRight, ExternalLink, Calendar } from "lucide-react";
@@ -21,9 +22,11 @@ export default function ProfilePage() {
     enabled: !!user,
   });
 
+  const { logout: auth0Logout } = useAuth0();
+
   function logout() {
     setUser(null);
-    navigate("/");
+    auth0Logout({ logoutParams: { returnTo: window.location.origin + window.location.pathname } });
   }
 
   if (!user) return null;
