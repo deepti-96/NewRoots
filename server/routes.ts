@@ -2,6 +2,9 @@ import type { Express } from "express";
 import { type Server } from "http";
 import { storage } from "./storage";
 import { insertUserSchema } from "@shared/schema";
+import multer from "multer";
+
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   // Auth - register
@@ -75,6 +78,79 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.patch("/api/tax-reminders/:id/dismiss", (req, res) => {
     storage.dismissTaxReminder(Number(req.params.id));
     res.json({ success: true });
+  });
+
+  // ElevenLabs TTS proxy — keeps API key server-side
+  app.post("/api/tts", async (req, res) => {
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) return res.status(503).json({ error: "TTS service not configured" });
+
+    const { text, voiceId } = req.body as { text: string; voiceId: string };
+    if (!text || typeof text !== "string" || text.length > 5000)
+      return res.status(400).json({ error: "Invalid text" });
+    if (!voiceId || typeof voiceId !== "string")
+      return res.status(400).json({ error: "Invalid voiceId" });
+
+    try {
+      const upstream = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+        {
+          method: "POST",
+          headers: {
+            "xi-api-key": apiKey,
+            "Content-Type": "application/json",
+            Accept: "audio/mpeg",
+          },
+          body: JSON.stringify({
+            text,
+            model_id: "eleven_multilingual_v2",
+            voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+          }),
+        }
+      );
+      if (!upstream.ok)
+        return res.status(upstream.status).json({ error: await upstream.text() });
+
+      res.setHeader("Content-Type", "audio/mpeg");
+      res.setHeader("Cache-Control", "no-store");
+      res.send(Buffer.from(await upstream.arrayBuffer()));
+    } catch (err: any) {
+      console.error("TTS proxy error:", err);
+      res.status(500).json({ error: "TTS proxy failed" });
+    }
+  });
+
+  // ElevenLabs STT proxy — keeps API key server-side
+  app.post("/api/stt", upload.single("audio"), async (req, res) => {
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) return res.status(503).json({ error: "STT service not configured" });
+    if (!req.file) return res.status(400).json({ error: "No audio file received" });
+
+    try {
+      const formData = new FormData();
+      formData.append(
+        "file",
+        new Blob([req.file.buffer], { type: req.file.mimetype }),
+        "audio.webm"
+      );
+      formData.append("model_id", "scribe_v1");
+      if (req.body.language_code) formData.append("language_code", req.body.language_code);
+
+      const upstream = await fetch("https://api.elevenlabs.io/v1/speech-to-text", {
+        method: "POST",
+        headers: { "xi-api-key": apiKey },
+        body: formData,
+      });
+
+      if (!upstream.ok)
+        return res.status(upstream.status).json({ error: await upstream.text() });
+
+      const result = await upstream.json() as { text?: string };
+      res.json({ text: result.text ?? "" });
+    } catch (err: any) {
+      console.error("STT proxy error:", err);
+      res.status(500).json({ error: "STT proxy failed" });
+    }
   });
 
   return httpServer;
