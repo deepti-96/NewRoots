@@ -3,7 +3,7 @@ import { useApp } from "@/App";
 import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
 import { useLocation } from "wouter";
-import { LANGUAGES } from "@/lib/translations";
+import { LANGUAGES, t } from "@/lib/translations";
 
 export function LanguageToggle() {
   const { language } = useApp();
@@ -22,7 +22,7 @@ export function LanguageToggle() {
       <span className="font-bold text-emerald-700">
         {currentLang?.flag} {currentLang?.nativeLabel}
       </span>
-      <span className="ml-auto text-xs text-slate-400">Change</span>
+      <span className="ml-auto text-xs text-slate-400">{t(language, "changeLanguage")}</span>
     </Button>
   );
 }
