@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* WelcomeCover palette — warm cobalt blue + amber gold for hope and trust */
+    --background: 220 30% 97%;
+    --foreground: 220 25% 12%;
+    --card: 220 28% 98%;
+    --card-foreground: 220 25% 12%;
+    --popover: 220 28% 98%;
+    --popover-foreground: 220 25% 12%;
+    --primary: 215 72% 38%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 38 88% 55%;
+    --secondary-foreground: 220 25% 12%;
+    --muted: 220 20% 93%;
+    --muted-foreground: 220 12% 46%;
+    --accent: 150 58% 38%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 74% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 18% 88%;
+    --input: 220 18% 88%;
+    --ring: 215 72% 38%;
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 220 20% 9%;
+    --foreground: 220 12% 88%;
+    --card: 220 18% 11%;
+    --card-foreground: 220 12% 88%;
+    --popover: 220 18% 11%;
+    --popover-foreground: 220 12% 88%;
+    --primary: 215 68% 58%;
+    --primary-foreground: 220 25% 8%;
+    --secondary: 38 78% 52%;
+    --secondary-foreground: 220 25% 8%;
+    --muted: 220 16% 16%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 150 48% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 64% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 14% 20%;
+    --input: 220 14% 20%;
+    --ring: 215 68% 58%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', 'General Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 9999px; }
+
+/* Progress animation */
+@keyframes progress-fill {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+
+/* Milestone pulse for urgent items */
+@keyframes pulse-urgent {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(38 88% 55% / 0.4); }
+  50% { box-shadow: 0 0 0 8px hsl(38 88% 55% / 0); }
+}
+
+.pulse-urgent {
+  animation: pulse-urgent 2s ease-in-out infinite;
+}
+
+/* Voice button animation */
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+.voice-wave span {
+  display: inline-block;
+  width: 3px;
+  height: 20px;
+  background: currentColor;
+  border-radius: 9999px;
+  animation: wave 0.8s ease-in-out infinite;
+  transform-origin: bottom;
+}
+.voice-wave span:nth-child(2) { animation-delay: 0.1s; }
+.voice-wave span:nth-child(3) { animation-delay: 0.2s; }
+.voice-wave span:nth-child(4) { animation-delay: 0.1s; }
+
+/* Hero gradient */
+.hero-gradient {
+  background: linear-gradient(135deg, hsl(215 72% 18%) 0%, hsl(215 72% 32%) 50%, hsl(200 72% 28%) 100%);
+}
+
+/* Card hover lift */
+.card-lift {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px hsl(220 25% 12% / 0.12);
+}
+
+/* Day counter badge */
+.day-badge {
+  background: linear-gradient(135deg, hsl(38 88% 55%), hsl(38 88% 45%));
+  color: hsl(220 25% 8%);
+}
+
+/* Milestone track line */
+.milestone-track::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: hsl(var(--border));
+  z-index: 0;
+}
