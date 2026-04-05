@@ -148,7 +148,6 @@ export default function OnboardingPage() {
     } catch (err) {
       toast({ title: "Error saving profile", variant: "destructive" });
       setIsFinishing(false);
-      setIsFinishing(false);
     }
   }
 
