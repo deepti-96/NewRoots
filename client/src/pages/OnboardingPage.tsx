@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useApp } from "@/App";
 import { t, LANGUAGES, type Language } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { speakText } from "@/lib/voiceUtils";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -28,8 +29,31 @@ const DOC_ICONS: Record<string, any> = {
   payStubs: BadgeDollarSign,
   schoolDocs: GraduationCap,
   ssnDoc: Briefcase,
-  birthCert: FileText
+  birthCert: FileText,
 };
+
+const ARRIVAL_MONTHS = [
+  { value: 1, label: "January" },
+  { value: 2, label: "February" },
+  { value: 3, label: "March" },
+  { value: 4, label: "April" },
+  { value: 5, label: "May" },
+  { value: 6, label: "June" },
+  { value: 7, label: "July" },
+  { value: 8, label: "August" },
+  { value: 9, label: "September" },
+  { value: 10, label: "October" },
+  { value: 11, label: "November" },
+  { value: 12, label: "December" },
+] as const;
+
+function formatDatePart(value: number) {
+  return value.toString().padStart(2, "0");
+}
+
+function toIsoDate(year: number, month: number, day: number) {
+  return `${year}-${formatDatePart(month)}-${formatDatePart(day)}`;
+}
 
 export default function OnboardingPage() {
   const [, navigate] = useLocation();
@@ -46,8 +70,36 @@ export default function OnboardingPage() {
   const [state, setState] = useState("California");
   const [largeTextLocal, setLargeTextLocal] = useState(false);
   const [voiceLocal, setVoiceLocal] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
 
   const lang = language;
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1;
+  const currentDay = today.getDate();
+  const [selectedYear, selectedMonth, selectedDay] = arrivalDate.split("-").map(Number);
+  const arrivalYearOptions = Array.from({ length: currentYear - 1970 + 1 }, (_, index) => currentYear - index);
+  const arrivalMonthOptions = ARRIVAL_MONTHS.filter((month) =>
+    selectedYear === currentYear ? month.value <= currentMonth : true,
+  );
+  const daysInSelectedMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+  const maxArrivalDay =
+    selectedYear === currentYear && selectedMonth === currentMonth
+      ? Math.min(daysInSelectedMonth, currentDay)
+      : daysInSelectedMonth;
+  const arrivalDayOptions = Array.from({ length: maxArrivalDay }, (_, index) => index + 1);
+
+  function updateArrivalDate(year: number, month: number, day: number) {
+    const safeMonth = year === currentYear ? Math.min(month, currentMonth) : month;
+    const daysInMonth = new Date(year, safeMonth, 0).getDate();
+    const futureDayLimit =
+      year === currentYear && safeMonth === currentMonth
+        ? Math.min(daysInMonth, currentDay)
+        : daysInMonth;
+    const safeDay = Math.min(day, futureDayLimit);
+
+    setArrivalDate(toIsoDate(year, safeMonth, safeDay));
+  }
   const totalSteps = 4;
 
   function toggleDoc(doc: string) {
@@ -55,10 +107,15 @@ export default function OnboardingPage() {
   }
 
   async function finishOnboarding() {
-    if (!user) {
-      navigate("/");
+    if (!user || isFinishing) {
+      if (!user) {
+        navigate("/");
+      }
       return;
     }
+
+    setIsFinishing(true);
+
     try {
       await apiRequest("PATCH", `/api/user/${user.id}`, {
           language: lang,
@@ -72,11 +129,14 @@ export default function OnboardingPage() {
           profileComplete: true,
       });
 
-      // Seed milestones for this user
       const milestoneKeys = ["sim_card", "address", "i94", "ssn", "bank_account", "health_insurance",
         "snap", "school_enrollment", "drivers_license", "itin", "vita_tax", "wic", "medicaid"];
-      for (const key of milestoneKeys) {
-        await apiRequest("POST", "/api/milestones", { userId: user.id, key, completed: false });
+      const milestoneResults = await Promise.allSettled(
+        milestoneKeys.map((key) => apiRequest("POST", "/api/milestones", { userId: user.id, key, completed: false })),
+      );
+
+      if (milestoneResults.some((result) => result.status === "rejected")) {
+        console.warn("Some onboarding milestones could not be seeded", milestoneResults);
       }
 
       // Persist the onboarding language choice to localStorage so it survives
@@ -87,6 +147,7 @@ export default function OnboardingPage() {
       navigate("/dashboard");
     } catch (err) {
       toast({ title: "Error saving profile", variant: "destructive" });
+      setIsFinishing(false);
     }
   }
 
@@ -206,15 +267,56 @@ export default function OnboardingPage() {
         {/* Arrival Date - Floating Label Style */}
         <div className="relative pt-2">
           <label className="absolute -top-1 left-3 bg-white px-1 text-xs font-bold text-emerald-800 z-10">{t(lang, "arrivalDateLabel")}</label>
-          <input
-            data-testid="input-arrival-date"
-            type="date"
-            value={arrivalDate}
-            onChange={e => setArrivalDate(e.target.value)}
-            max={new Date().toISOString().split("T")[0]}
-            className="w-full border-2 border-slate-200 rounded-xl px-4 py-4 bg-white text-slate-900 font-medium text-base focus:border-emerald-600 focus:ring-0 outline-none transition-colors"
-          />
+        <div className="grid grid-cols-3 gap-3">
+          <Select
+            value={String(selectedMonth)}
+            onValueChange={(value) => updateArrivalDate(selectedYear, Number(value), selectedDay)}
+          >
+            <SelectTrigger data-testid="select-arrival-month" className="h-14 rounded-xl border-2 border-slate-200 bg-white px-4 text-base font-medium text-slate-900">
+              <SelectValue placeholder="Month" />
+            </SelectTrigger>
+            <SelectContent>
+              {arrivalMonthOptions.map((month) => (
+                <SelectItem key={month.value} value={String(month.value)}>
+                  {month.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={String(selectedDay)}
+            onValueChange={(value) => updateArrivalDate(selectedYear, selectedMonth, Number(value))}
+          >
+            <SelectTrigger data-testid="select-arrival-day" className="h-14 rounded-xl border-2 border-slate-200 bg-white px-4 text-base font-medium text-slate-900">
+              <SelectValue placeholder="Day" />
+            </SelectTrigger>
+            <SelectContent>
+              {arrivalDayOptions.map((day) => (
+                <SelectItem key={day} value={String(day)}>
+                  {day}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={String(selectedYear)}
+            onValueChange={(value) => updateArrivalDate(Number(value), selectedMonth, selectedDay)}
+          >
+            <SelectTrigger data-testid="select-arrival-year" className="h-14 rounded-xl border-2 border-slate-200 bg-white px-4 text-base font-medium text-slate-900">
+              <SelectValue placeholder="Year" />
+            </SelectTrigger>
+            <SelectContent>
+              {arrivalYearOptions.map((year) => (
+                <SelectItem key={year} value={String(year)}>
+                  {year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
+      </div>
       </div>
     </div>,
 
@@ -294,9 +396,11 @@ export default function OnboardingPage() {
         <Button
           data-testid="btn-go-dashboard"
           onClick={finishOnboarding}
-          className="w-full py-7 text-lg font-bold bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-lg hover:-translate-y-0.5 transition-all"
+          disabled={isFinishing}
+          className="w-full py-7 text-lg font-bold bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-100 disabled:bg-emerald-700"
         >
-          {t(lang, "goToDashboard")} <ChevronRight className="w-5 h-5 ml-2" />
+          {isFinishing ? "Opening your dashboard..." : t(lang, "goToDashboard")}
+          <ChevronRight className="w-5 h-5 ml-2" />
         </Button>
       </div>
     </div>,
