@@ -59,6 +59,7 @@ export default function OnboardingPage() {
   const [state, setState] = useState("California");
   const [largeTextLocal, setLargeTextLocal] = useState(false);
   const [voiceLocal, setVoiceLocal] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
 
   const lang = language;
   const today = new Date();
@@ -95,10 +96,15 @@ export default function OnboardingPage() {
   }
 
   async function finishOnboarding() {
-    if (!user) {
-      navigate("/");
+    if (!user || isFinishing) {
+      if (!user) {
+        navigate("/");
+      }
       return;
     }
+
+    setIsFinishing(true);
+
     try {
       await apiRequest("PATCH", `/api/user/${user.id}`, {
           language: lang,
@@ -112,18 +118,19 @@ export default function OnboardingPage() {
           profileComplete: true,
       });
 
-      // Seed milestones for this user
+      // Seed milestones for this user in parallel so the finish action feels immediate.
       const milestoneKeys = ["sim_card", "address", "i94", "ssn", "bank_account", "health_insurance",
         "snap", "school_enrollment", "drivers_license", "itin", "vita_tax", "wic", "medicaid"];
-      for (const key of milestoneKeys) {
-        await apiRequest("POST", "/api/milestones", { userId: user.id, key, completed: false });
-      }
+      await Promise.all(
+        milestoneKeys.map((key) => apiRequest("POST", "/api/milestones", { userId: user.id, key, completed: false })),
+      );
 
       setLargeText(largeTextLocal);
       setVoiceEnabled(voiceLocal);
       navigate("/dashboard");
     } catch (err) {
       toast({ title: "Error saving profile", variant: "destructive" });
+      setIsFinishing(false);
     }
   }
 
@@ -355,9 +362,10 @@ export default function OnboardingPage() {
       <Button
         data-testid="btn-go-dashboard"
         onClick={finishOnboarding}
-        className="w-full py-5 text-base"
+        disabled={isFinishing}
+        className="w-full py-5 text-base transition-transform active:scale-[0.99]"
       >
-        {t(lang, "goToDashboard")} →
+        {isFinishing ? "Opening your dashboard..." : `${t(lang, "goToDashboard")} →`}
       </Button>
     </div>,
   ];
