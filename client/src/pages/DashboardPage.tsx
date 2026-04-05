@@ -66,8 +66,14 @@ export default function DashboardPage() {
   const milestoneMap: Record<string, Milestone> = {};
   for (const m of milestones) milestoneMap[m.key] = m;
 
+  // Filter milestones to only show those relevant to the user's state
+  const userState = profile?.state || "";
+  const visibleMilestones = MILESTONES.filter(
+    m => !m.states || m.states.length === 0 || m.states.includes(userState)
+  );
+
   const completedCount = milestones.filter(m => m.completed).length;
-  const totalCount = MILESTONES.length;
+  const totalCount = visibleMilestones.length;
   const completionPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   const weeks = [
@@ -79,11 +85,11 @@ export default function DashboardPage() {
   ];
 
   function getMilestonesForWeekRange(min: number, max: number) {
-    return MILESTONES.filter(m => m.week >= min && m.week <= max);
+    return visibleMilestones.filter(m => m.week >= min && m.week <= max);
   }
 
   // Find next critical action
-  const nextCritical = MILESTONES.find(m => m.urgency === "urgent" && !milestoneMap[m.key]?.completed);
+  const nextCritical = visibleMilestones.find(m => m.urgency === "urgent" && !milestoneMap[m.key]?.completed);
 
   if (!user) return null;
 
