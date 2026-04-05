@@ -423,7 +423,7 @@ export default function OnboardingPage() {
           disabled={isFinishing}
           className="w-full py-7 text-lg font-bold bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-100 disabled:bg-emerald-700"
         >
-          {isFinishing ? "Opening your dashboard..." : t(lang, "goToDashboard")}
+          {isFinishing ? t(lang, "openingDashboard") : t(lang, "goToDashboard")}
           <ChevronRight className="w-5 h-5 ml-2" />
         </Button>
       </div>
