@@ -247,7 +247,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     if (!userId || typeof userId !== "number")
       return res.status(400).json({ error: "No userId provided" });
     try {
-      const { getAgentForUser } = await import("./agent");
+      const { getAgentForUser } = await import("./agent.js");
       const agent = getAgentForUser(userId);
       const userProfile = await storage.getUser(userId);
       if (userProfile) {
@@ -274,7 +274,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     const { userId } = req.body as { userId: number };
     if (!userId) return res.status(400).json({ error: "No userId" });
     try {
-      const { getAgentForUser } = await import("./agent");
+      const { getAgentForUser } = await import("./agent.js");
       const agent = getAgentForUser(userId);
       agent.clearHistory();
       res.json({ success: true });

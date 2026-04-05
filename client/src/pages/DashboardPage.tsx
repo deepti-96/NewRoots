@@ -51,6 +51,13 @@ export default function DashboardPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["/api/milestones", user?.id] }),
   });
 
+  // Creates a missing milestone row then marks it complete in one step
+  const createAndCompleteMutation = useMutation({
+    mutationFn: ({ key }: { key: string }) =>
+      apiRequest("POST", "/api/milestones", { userId: user!.id, key, completed: true }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["/api/milestones", user?.id] }),
+  });
+
   const arrivalDate = profile?.arrivalDate;
   const daysInUS = arrivalDate
     ? Math.max(0, Math.floor((Date.now() - new Date(arrivalDate).getTime()) / 86400000))
@@ -253,6 +260,8 @@ export default function DashboardPage() {
                                 onClick={() => {
                                   if (dbMs) {
                                     toggleMutation.mutate({ id: dbMs.id, completed: !isCompleted });
+                                  } else {
+                                    createAndCompleteMutation.mutate({ key: milestone.key });
                                   }
                                 }}
                               >
