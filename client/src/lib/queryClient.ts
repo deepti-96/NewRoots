@@ -9,6 +9,11 @@ export function setTokenGetter(fn: () => Promise<string | null>) {
   _getToken = fn;
 }
 
+export async function getToken(): Promise<string | null> {
+  if (!_getToken) return null;
+  try { return await _getToken(); } catch { return null; }
+}
+
 async function authHeaders(hasBody: boolean): Promise<HeadersInit> {
   const headers: Record<string, string> = {};
   if (hasBody) headers["Content-Type"] = "application/json";
