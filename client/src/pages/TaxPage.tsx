@@ -279,7 +279,7 @@ export default function TaxPage() {
           <div className="flex gap-3">
             <Info className="w-5 h-5 text-blue-700 flex-shrink-0 mt-0.5" />
             <p className="text-blue-800 font-medium">
-              This information is educational. Tax situations vary. For your specific case, visit a free VITA site or consult a tax professional. NewRoots does not provide tax advice.
+              {t(lang, "taxDisclaimer")}
             </p>
           </div>
         </div>
@@ -287,10 +287,10 @@ export default function TaxPage() {
         {/* Key tax benefits cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {[
-            { icon: "💵", label: "EITC", sub: "Up to $7,830 refund" },
-            { icon: "👶", label: "Child Tax Credit", sub: "Up to $2,000/child" },
-            { icon: "🆓", label: "Free Filing", sub: "VITA — income < $67K" },
-            { icon: "🔢", label: "ITIN Available", sub: "File without SSN" },
+            { icon: "💵", label: t(lang, "taxCard1Label"), sub: t(lang, "taxCard1Sub") },
+            { icon: "👶", label: t(lang, "taxCard2Label"), sub: t(lang, "taxCard2Sub") },
+            { icon: "🆓", label: t(lang, "taxCard3Label"), sub: t(lang, "taxCard3Sub") },
+            { icon: "🔢", label: t(lang, "taxCard4Label"), sub: t(lang, "taxCard4Sub") },
           ].map(({ icon, label, sub }) => (
             <div key={label} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
               <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-2xl mb-3 opacity-80 grayscale">
@@ -369,7 +369,7 @@ export default function TaxPage() {
             className="inline-block"
           >
             <Button size="lg" className="bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-sm px-8 font-semibold">
-              Find Free Tax Help Near Me
+              {t(lang, "findTaxHelp")}
               <ExternalLink className="w-5 h-5 ml-2" />
             </Button>
           </a>

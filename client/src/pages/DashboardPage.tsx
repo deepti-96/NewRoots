@@ -64,11 +64,11 @@ export default function DashboardPage() {
   const completionPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   const weeks = [
-    { label: "Week 1 — First 72 Hours", range: [1, 1] },
-    { label: "Week 2 — Key Paperwork & Identity", range: [2, 2] },
-    { label: "Week 3–4 — Benefits & Legal Compliance", range: [3, 4] },
-    { label: "Month 2 — Employment & Self-Sufficiency", range: [5, 7] },
-    { label: "Month 3 — Stability & Integration", range: [8, 13] },
+    { label: t(lang, "week1Label"), range: [1, 1] },
+    { label: t(lang, "week2Label"), range: [2, 2] },
+    { label: t(lang, "week34Label"), range: [3, 4] },
+    { label: t(lang, "month2Label"), range: [5, 7] },
+    { label: t(lang, "month3Label"), range: [8, 13] },
   ];
 
   function getMilestonesForWeekRange(min: number, max: number) {
@@ -83,8 +83,8 @@ export default function DashboardPage() {
   return (
     <div className="max-w-4xl mx-auto w-full p-8 animate-in fade-in duration-500">
       {/* Hero Welcome */}
-      <h1 className="text-slate-900 text-3xl font-bold mb-2">Welcome to NewRoots.</h1>
-      <p className="text-slate-500 text-lg mb-8">Here is your Day 1 Action Plan.</p>
+      <h1 className="text-slate-900 text-3xl font-bold mb-2">{t(lang, "welcomeTitle")}</h1>
+      <p className="text-slate-500 text-lg mb-8">{t(lang, "day1Plan")}</p>
 
       {/* Critical Action Alert */}
       {nextCritical ? (
@@ -93,7 +93,7 @@ export default function DashboardPage() {
             <AlertCircle className="w-6 h-6 text-amber-700" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-amber-900 mb-1">Action Needed: {getMilestoneTitle(nextCritical, lang)}</h3>
+            <h3 className="text-xl font-bold text-amber-900 mb-1">{t(lang, "actionNeeded")}: {getMilestoneTitle(nextCritical, lang)}</h3>
             <p className="text-amber-800/80 mb-3">{getMilestoneDescription(nextCritical, lang)}</p>
             <Button 
                onClick={() => {
@@ -102,7 +102,7 @@ export default function DashboardPage() {
                }}
                className="bg-amber-700 hover:bg-amber-800 text-white rounded-xl shadow-sm"
             >
-              Resolve Now
+              {t(lang, "resolveNow")}
             </Button>
           </div>
         </div>
@@ -113,7 +113,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <h3 className="text-xl font-bold text-emerald-900 mb-1">All Caught Up!</h3>
-            <p className="text-emerald-800/80">You have completed all urgent tasks for now.</p>
+            <p className="text-emerald-800/80">{t(lang, "allUrgentDone")}</p>
           </div>
         </div>
       )}
@@ -170,9 +170,10 @@ export default function DashboardPage() {
                   const description = getMilestoneDescription(milestone, lang);
                   const tips = getMilestoneTips(milestone, lang);
 
-                  let statusBadgeText = "ready";
-                  if (isCompleted) statusBadgeText = "completed";
-                  else if (milestone.urgency === "urgent") statusBadgeText = "action_needed";
+                  let statusKey: "ready" | "completed" | "action_needed" = "ready";
+                  if (isCompleted) statusKey = "completed";
+                  else if (milestone.urgency === "urgent") statusKey = "action_needed";
+                  const statusLabel = isCompleted ? t(lang, "statusCompleted") : milestone.urgency === "urgent" ? t(lang, "statusActionNeeded") : t(lang, "statusReady");
 
                   return (
                     <StatusCard 
@@ -184,7 +185,7 @@ export default function DashboardPage() {
                       <div id={`milestone-card-${milestone.key}`}>
                         <div className="flex flex-wrap items-center justify-between gap-4">
                           <div className="flex items-center gap-3">
-                            <DependencyBadge status={statusBadgeText as any} />
+                            <DependencyBadge status={statusKey} label={statusLabel} />
                           </div>
                           
                           <div className="flex gap-2">
@@ -214,7 +215,7 @@ export default function DashboardPage() {
 
                             {milestone.requiredDocs && milestone.requiredDocs.length > 0 && (
                               <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                <p className="text-sm font-semibold text-slate-800 mb-2">Documents needed:</p>
+                                <p className="text-sm font-semibold text-slate-800 mb-2">{t(lang, "documentsNeeded")}</p>
                                 <div className="flex flex-wrap gap-2">
                                   {milestone.requiredDocs.map(doc => (
                                     <span key={doc} className="text-xs bg-white border border-slate-200 text-slate-700 rounded-lg px-3 py-1 shadow-sm">
@@ -228,7 +229,7 @@ export default function DashboardPage() {
                             {tips.length > 0 && (
                               <div className="bg-emerald-50 text-emerald-900 rounded-xl p-4 border border-emerald-100 space-y-2">
                                 <p className="text-sm font-bold flex items-center gap-2">
-                                  <AlertCircle className="w-4 h-4 text-emerald-600" /> Tips
+                                  <AlertCircle className="w-4 h-4 text-emerald-600" /> {t(lang, "tipsLabel")}
                                 </p>
                                 <ul className="list-disc list-inside space-y-1">
                                   {tips.map(tip => (

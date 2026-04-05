@@ -386,12 +386,12 @@ export default function BenefitsPage() {
   return (
     <div className="max-w-4xl mx-auto w-full p-8 animate-in fade-in duration-500">
       <div className="mb-6">
-        <h1 className="text-slate-900 text-3xl font-bold mb-2">Benefits & Support Programs</h1>
+        <h1 className="text-slate-900 text-3xl font-bold mb-2">{t(lang, "benefitsTitle")}</h1>
         
         {/* Soft blue informational box */}
         <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mt-4 shadow-sm">
           <p className="text-blue-800 font-medium">
-            Based on your answers, these programs may be worth checking. Eligibility depends on your specific situation, state, and immigration status. Always verify with official sources or a human navigator.
+            {t(lang, "benefitsDisclaimer")}
           </p>
         </div>
       </div>
@@ -404,14 +404,14 @@ export default function BenefitsPage() {
           const howTo = benefit.howToApply[lang] || benefit.howToApply.en;
 
           // Determine badge based on urgency mapping
-          let badgeText = benefit.urgency === "urgent" ? "You may qualify" : "Worth checking";
+          let badgeText = benefit.urgency === "urgent" ? t(lang, "youMayQualify") : t(lang, "worthChecking");
           let badgeStyle = benefit.urgency === "urgent" 
             ? "bg-emerald-50 text-emerald-700 border-none"
             : "bg-blue-50 text-blue-700 border-none";
             
           // If there's an action required or some missing state (mocked logic)
           if (benefit.key === "ssn_benefit") {
-            badgeText = "Action Required";
+            badgeText = t(lang, "actionRequired");
             badgeStyle = "bg-amber-50 text-amber-700 border-none";
           }
 

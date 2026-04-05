@@ -107,7 +107,9 @@ export default function App() {
         language: (dbUser.language as Language) || "en",
         profileComplete: dbUser.profileComplete,
       });
-      if (dbUser.language && dbUser.language !== "en") {
+      // DB language is the source of truth. Always apply it on sign-in
+      // so the user's saved profile preference takes effect.
+      if (dbUser.language) {
         setLanguage(dbUser.language as Language);
       }
     } catch (err) {

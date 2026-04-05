@@ -79,6 +79,9 @@ export default function OnboardingPage() {
         await apiRequest("POST", "/api/milestones", { userId: user.id, key, completed: false });
       }
 
+      // Persist the onboarding language choice to localStorage so it survives
+      // future sign-ins (localStorage is the source of truth, not the DB).
+      setLanguage(lang);
       setLargeText(largeTextLocal);
       setVoiceEnabled(voiceLocal);
       navigate("/dashboard");

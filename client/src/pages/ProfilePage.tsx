@@ -26,6 +26,8 @@ export default function ProfilePage() {
 
   function logout() {
     setUser(null);
+    localStorage.setItem("newroots_lang", "en");
+    setLanguage("en");
     auth0Logout({ 
       logoutParams: { 
         returnTo: window.location.origin 
@@ -44,7 +46,7 @@ export default function ProfilePage() {
   // Format dates gracefully
   const arrivalDate = profile?.arrivalDate 
     ? new Date(profile.arrivalDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
-    : "Not recorded";
+    : t(lang, "profileNotRecorded");
 
   const joinDate = new Date().toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 
@@ -58,7 +60,7 @@ export default function ProfilePage() {
           className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
         >
           <LogOut className="w-4 h-4" />
-          Sign Out
+          {t(lang, "signOut")}
         </button>
       </div>
 
@@ -79,13 +81,13 @@ export default function ProfilePage() {
               </span>
             </div>
             <div>
-              <p className="text-emerald-100 text-sm font-bold uppercase tracking-widest mb-1 opacity-80">Primary Member</p>
+              <p className="text-emerald-100 text-sm font-bold uppercase tracking-widest mb-1 opacity-80">{t(lang, "primaryMember")}</p>
               <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">{user.username}</h2>
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center justify-center px-2.5 py-1 text-xs font-bold text-teal-900 bg-emerald-100 rounded-full">
                   ID: {memberId}
                 </span>
-                <span className="text-emerald-50/60 text-xs">Joined {joinDate}</span>
+                <span className="text-emerald-50/60 text-xs">{t(lang, "joined")} {joinDate}</span>
               </div>
             </div>
           </div>
@@ -103,14 +105,14 @@ export default function ProfilePage() {
         <div className="lg:col-span-7 space-y-10">
           
           <section>
-            <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest mb-6">Verified Information</h3>
+            <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest mb-6">{t(lang, "verifiedInformation")}</h3>
             <div className="bg-white border border-slate-100 rounded-3xl p-2 shadow-sm">
               {[
-                { icon: MapPin, label: "Current State", value: profile?.state || "Not set" },
-                { icon: Users, label: "Family Size", value: profile?.familySize ? `${profile.familySize} Members` : "Not set" },
-                { icon: Calendar, label: "Arrival Date", value: arrivalDate },
-                { icon: Shield, label: "Health Coverage", value: profile?.hasInsurance ? "Insured" : "None Recorded" },
-                { icon: Briefcase, label: "Employment", value: profile?.employmentStatus === "employed" ? "Employed" : "Looking for work" },
+                { icon: MapPin, label: t(lang, "profileCurrentState"), value: profile?.state || t(lang, "profileNotSet") },
+                { icon: Users, label: t(lang, "profileFamilySize"), value: profile?.familySize ? `${profile.familySize} ${t(lang, "profileMembers")}` : t(lang, "profileNotSet") },
+                { icon: Calendar, label: t(lang, "profileArrivalDate"), value: arrivalDate },
+                { icon: Shield, label: t(lang, "profileHealthCoverage"), value: profile?.hasInsurance ? t(lang, "profileInsured") : t(lang, "profileNotRecorded") },
+                { icon: Briefcase, label: t(lang, "profileEmployment"), value: profile?.employmentStatus === "employed" ? t(lang, "profileEmployed") : t(lang, "profileLookingForWork") },
               ].map((item, index) => (
                 <div key={item.label} className={`flex items-center justify-between p-4 ${index !== 4 ? 'border-b border-slate-50' : ''} hover:bg-slate-50/50 rounded-xl transition-colors`}>
                   <div className="flex items-center gap-4">
@@ -126,14 +128,21 @@ export default function ProfilePage() {
           </section>
 
           <section>
-            <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest mb-6">Language Preference</h3>
+            <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest mb-6">{t(lang, "languagePreference")}</h3>
             <div className="bg-white border border-slate-100 rounded-3xl p-3 shadow-sm flex flex-col sm:flex-row flex-wrap gap-2">
               {LANGUAGES.map(l => {
                 const isActive = lang === l.code;
                 return (
                   <button
                     key={l.code}
-                    onClick={() => setLanguage(l.code as Language)}
+                    onClick={() => {
+                      const newLang = l.code as Language;
+                      setLanguage(newLang);
+                      // Persist to DB so it survives sign-ins
+                      if (user) {
+                        apiRequest("PATCH", `/api/user/${user.id}`, { language: newLang }).catch(console.error);
+                      }
+                    }}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 ${
                       isActive 
                         ? "bg-emerald-50 text-emerald-800 ring-2 ring-emerald-500 ring-inset shadow-sm" 
@@ -154,7 +163,7 @@ export default function ProfilePage() {
           
           {docs.length > 0 && (
             <section>
-              <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest mb-6">Digital Vault</h3>
+              <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest mb-6">{t(lang, "digitalVault")}</h3>
               <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
                 <div className="space-y-4">
                   {docs.map(doc => (
@@ -171,7 +180,7 @@ export default function ProfilePage() {
           )}
 
           <section>
-            <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest mb-6">External Support Links</h3>
+            <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-widest mb-6">{t(lang, "externalSupportLinks")}</h3>
             <div className="bg-white border border-slate-100 rounded-3xl p-2 shadow-sm">
               {[
                 { label: "USAGov — Find Benefits", url: "https://www.usa.gov/benefits" },
