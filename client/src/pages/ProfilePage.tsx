@@ -135,7 +135,14 @@ export default function ProfilePage() {
                 return (
                   <button
                     key={l.code}
-                    onClick={() => setLanguage(l.code as Language)}
+                    onClick={() => {
+                      const newLang = l.code as Language;
+                      setLanguage(newLang);
+                      // Persist to DB so it survives sign-ins
+                      if (user) {
+                        apiRequest("PATCH", `/api/user/${user.id}`, { language: newLang }).catch(console.error);
+                      }
+                    }}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 ${
                       isActive 
                         ? "bg-emerald-50 text-emerald-800 ring-2 ring-emerald-500 ring-inset shadow-sm" 
