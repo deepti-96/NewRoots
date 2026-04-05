@@ -6,10 +6,10 @@ import AppNav from "@/components/AppNav";
 import VoiceButton from "@/components/VoiceButton";
 import { MILESTONES, getMilestoneTitle, getMilestoneDescription, getMilestoneTips } from "@/lib/milestoneData";
 import { Check, Clock, AlertCircle, ChevronDown, ChevronUp, ExternalLink, Mic } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { VoiceInput } from "@/lib/voiceUtils";
+import { ElevenLabsVoiceInput, speakText } from "@/lib/voiceUtils";
 
 interface Milestone {
   id: number;
@@ -85,25 +85,27 @@ export default function DashboardPage() {
     optional: "text-muted-foreground bg-muted",
   };
 
-  // Voice input for search
-  let voiceInputRef: VoiceInput | null = null;
+  // Voice input — ElevenLabs Scribe STT via MediaRecorder
+  // useRef keeps the instance stable across renders so stop() actually reaches the recorder
+  const voiceInputRef = useRef<ElevenLabsVoiceInput | null>(null);
   function startVoiceInput() {
     if (listening) {
-      voiceInputRef?.stop();
-      setListening(false);
+      voiceInputRef.current?.stop();
+      // onEnd callback handles setListening(false)
       return;
     }
-    voiceInputRef = new VoiceInput({
+    voiceInputRef.current = new ElevenLabsVoiceInput({
       lang,
-      onResult: (text) => {
+      onResult: (text: string) => {
         setVoiceText(text);
-        setListening(false);
+        // TODO (teammate): replace speakText(text, lang) with LLM call → speak the answer
+        speakText(text, lang);
       },
       onStart: () => setListening(true),
       onEnd: () => setListening(false),
-      onError: () => setListening(false),
+      onError: (err: string) => { console.error("STT error:", err); setListening(false); },
     });
-    voiceInputRef.start();
+    voiceInputRef.current.start();
   }
 
   if (!user) return null;

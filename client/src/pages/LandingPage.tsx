@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useLocation } from "wouter";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useApp } from "@/App";
 import { t, LANGUAGES, type Language } from "@/lib/translations";
 import { speakText } from "@/lib/voiceUtils";
 import { Button } from "@/components/ui/button";
-import { Globe, ChevronRight, Volume2, Shield, Clock, Heart, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { Globe, ChevronRight, Volume2, VolumeX, Shield, Clock, Heart, Loader2 } from "lucide-react";
 
 export default function LandingPage() {
   const [, navigate] = useLocation();
@@ -13,7 +17,8 @@ export default function LandingPage() {
   const { loginWithRedirect, isAuthenticated } = useAuth0();
 
   const [langOpen, setLangOpen] = useState(false);
-  const [hasSpoken, setHasSpoken] = useState(false);
+  const [introPlaying, setIntroPlaying] = useState(false);
+  const introAbortRef = useRef<AbortController | null>(null);
 
   const lang = language;
 
@@ -26,10 +31,21 @@ export default function LandingPage() {
   }, [isAuthenticated, user, navigate]);
 
   function playIntro() {
-    if (!hasSpoken) {
-      speakText(t(lang, "voiceIntro"), lang);
-      setHasSpoken(true);
+    // If already playing or loading, stop and reset
+    if (introPlaying) {
+      introAbortRef.current?.abort();
+      introAbortRef.current = null;
+      setIntroPlaying(false);
+      return;
     }
+    // Abort any in-flight previous request before starting a new one
+    introAbortRef.current?.abort();
+    const controller = new AbortController();
+    introAbortRef.current = controller;
+    setIntroPlaying(true);
+    speakText(t(lang, "voiceIntro"), lang, () => {
+      if (!controller.signal.aborted) setIntroPlaying(false);
+    });
   }
 
   function handleGetStarted() {
@@ -132,7 +148,9 @@ export default function LandingPage() {
             onClick={playIntro}
             className="flex items-center gap-2 mx-auto mb-6 text-white/80 hover:text-white text-sm border border-white/30 rounded-full px-4 py-2 hover:bg-white/10 transition-colors"
           >
-            <Volume2 className="w-4 h-4" />
+            {introPlaying === true
+              ? <VolumeX className="w-4 h-4 animate-pulse" />
+              : <Volume2 className="w-4 h-4" />}
             {t(lang, "speakToRead")}
           </button>
 
