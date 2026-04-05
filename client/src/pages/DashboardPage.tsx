@@ -214,7 +214,7 @@ export default function DashboardPage() {
 
                             {milestone.requiredDocs && milestone.requiredDocs.length > 0 && (
                               <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                <p className="text-sm font-semibold text-slate-800 mb-2">Documents needed:</p>
+                                <p className="text-sm font-semibold text-slate-800 mb-2">{t(lang, "documentsNeeded")}</p>
                                 <div className="flex flex-wrap gap-2">
                                   {milestone.requiredDocs.map(doc => (
                                     <span key={doc} className="text-xs bg-white border border-slate-200 text-slate-700 rounded-lg px-3 py-1 shadow-sm">
@@ -228,7 +228,7 @@ export default function DashboardPage() {
                             {tips.length > 0 && (
                               <div className="bg-emerald-50 text-emerald-900 rounded-xl p-4 border border-emerald-100 space-y-2">
                                 <p className="text-sm font-bold flex items-center gap-2">
-                                  <AlertCircle className="w-4 h-4 text-emerald-600" /> Tips
+                                  <AlertCircle className="w-4 h-4 text-emerald-600" /> {t(lang, "tipsLabel")}
                                 </p>
                                 <ul className="list-disc list-inside space-y-1">
                                   {tips.map(tip => (

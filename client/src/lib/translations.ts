@@ -171,6 +171,9 @@ export const translations = {
     navDocuments: "My Documents",
     navProfile: "Family Profile",
     signOut: "Sign Out",
+
+    tipsLabel: "Tips",
+    documentsNeeded: "Documents needed:",
   },
   es: {
     appName: "NewRoots",
@@ -327,6 +330,9 @@ export const translations = {
     navDocuments: "Mis Documentos",
     navProfile: "Perfil Familiar",
     signOut: "Cerrar sesión",
+
+    tipsLabel: "Consejos",
+    documentsNeeded: "Documentos necesarios:",
   },
   zh: {
     appName: "NewRoots",
@@ -483,6 +489,9 @@ export const translations = {
     navDocuments: "我的证件",
     navProfile: "家庭资料",
     signOut: "退出登录",
+
+    tipsLabel: "提示",
+    documentsNeeded: "所需文件：",
   },
   hi: {
     appName: "NewRoots",
@@ -639,6 +648,9 @@ export const translations = {
     navDocuments: "मेरे दस्तावेज़",
     navProfile: "पारिवारिक प्रोफ़ाइल",
     signOut: "साइन आउट",
+
+    tipsLabel: "सुझाव",
+    documentsNeeded: "आवश्यक दस्तावेज़:",
   },
   ar: {
     appName: "NewRoots",
@@ -795,6 +807,9 @@ export const translations = {
     navDocuments: "وثائقي",
     navProfile: "الملف العائلي",
     signOut: "تسجيل الخروج",
+
+    tipsLabel: "نصائح",
+    documentsNeeded: "المستندات المطلوبة:",
   },
   fr: {
     appName: "NewRoots",
@@ -951,6 +966,9 @@ export const translations = {
     navDocuments: "Mes Documents",
     navProfile: "Profil Familial",
     signOut: "Se déconnecter",
+
+    tipsLabel: "Conseils",
+    documentsNeeded: "Documents requis :",
   },
   pt: {
     appName: "NewRoots",
@@ -1107,6 +1125,9 @@ export const translations = {
     navDocuments: "Meus Documentos",
     navProfile: "Perfil Familiar",
     signOut: "Sair",
+
+    tipsLabel: "Dicas",
+    documentsNeeded: "Documentos necessários:",
   },
   vi: {
     appName: "NewRoots",
@@ -1263,6 +1284,9 @@ export const translations = {
     navDocuments: "Tài Liệu Của Tôi",
     navProfile: "Hồ Sơ Gia Đình",
     signOut: "Đăng xuất",
+
+    tipsLabel: "Mẹo",
+    documentsNeeded: "Tài liệu cần thiết:",
   },
   ko: {
     appName: "NewRoots",
@@ -1419,6 +1443,9 @@ export const translations = {
     navDocuments: "내 서류",
     navProfile: "가족 프로필",
     signOut: "로그아웃",
+
+    tipsLabel: "팁",
+    documentsNeeded: "필요한 서류:",
   },
   tl: {
     appName: "NewRoots",
@@ -1575,6 +1602,9 @@ export const translations = {
     navDocuments: "Aking mga Dokumento",
     navProfile: "Profile ng Pamilya",
     signOut: "Mag-sign out",
+
+    tipsLabel: "Mga Tip",
+    documentsNeeded: "Mga dokumentong kailangan:",
   },
 };
 
