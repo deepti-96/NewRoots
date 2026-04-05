@@ -69,7 +69,13 @@ function AppContent() {
 
 export default function App() {
   const [user, setUser] = useState<AppUser | null>(null);
-  const [language, setLanguage] = useState<Language>("en");
+  const [language, setLanguageState] = useState<Language>(
+    () => (localStorage.getItem("newroots_lang") as Language) || "en"
+  );
+  const setLanguage = (lang: Language) => {
+    localStorage.setItem("newroots_lang", lang);
+    setLanguageState(lang);
+  };
   const [largeText, setLargeText] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [syncing, setSyncing] = useState(false);
