@@ -118,7 +118,7 @@ export default function DashboardPage() {
           <div className="flex items-start justify-between mb-3">
             <div>
               <p className="text-white/70 text-sm">{t(lang, "welcomeBack")},</p>
-              <h1 className="text-xl font-bold">{user.username}</h1>
+              <h1 className="text-xl font-bold">{user.displayName || user.username}</h1>
             </div>
             <div className="text-right">
               <div className="day-badge rounded-xl px-3 py-1.5 text-sm font-bold">

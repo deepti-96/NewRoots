@@ -12,8 +12,12 @@ export const db = drizzle(sqlite, { schema });
 sqlite.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL DEFAULT '',
+    auth0_sub TEXT UNIQUE,
+    email TEXT,
+    display_name TEXT,
+    avatar_url TEXT,
     language TEXT NOT NULL DEFAULT 'en',
     arrival_date TEXT,
     family_size INTEGER DEFAULT 1,
@@ -42,3 +46,17 @@ sqlite.exec(`
     dismissed INTEGER DEFAULT 0
   );
 `);
+
+// Migration: add Auth0 columns to existing databases
+try {
+  sqlite.exec(`ALTER TABLE users ADD COLUMN auth0_sub TEXT UNIQUE;`);
+} catch (_) { /* column already exists */ }
+try {
+  sqlite.exec(`ALTER TABLE users ADD COLUMN email TEXT;`);
+} catch (_) { /* column already exists */ }
+try {
+  sqlite.exec(`ALTER TABLE users ADD COLUMN display_name TEXT;`);
+} catch (_) { /* column already exists */ }
+try {
+  sqlite.exec(`ALTER TABLE users ADD COLUMN avatar_url TEXT;`);
+} catch (_) { /* column already exists */ }
