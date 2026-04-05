@@ -156,7 +156,7 @@ export default function DashboardPage() {
             <div key={label} className="space-y-4">
               <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                 <h3 className="text-lg font-semibold text-slate-800">{label}</h3>
-                <span className="text-sm font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                <span className="text-sm font-medium text-slate-600 bg-white/70 px-3 py-1 rounded-full border border-white/80">
                   {completedInGroup} / {items.length}
                 </span>
               </div>
@@ -174,13 +174,18 @@ export default function DashboardPage() {
                   if (isCompleted) statusKey = "completed";
                   else if (milestone.urgency === "urgent") statusKey = "action_needed";
                   const statusLabel = isCompleted ? t(lang, "statusCompleted") : milestone.urgency === "urgent" ? t(lang, "statusActionNeeded") : t(lang, "statusReady");
+                  const cardToneClass = isCompleted
+                    ? "border-slate-200 bg-slate-100/85 text-slate-700"
+                    : statusKey === "action_needed"
+                      ? "border-orange-100 bg-orange-50/35 text-slate-900"
+                      : "border-sky-200 bg-sky-50/70 text-slate-900";
 
                   return (
                     <StatusCard 
                       key={milestone.key}
                       title={title}
                       isActive={isExpanded}
-                      className={isCompleted ? "opacity-75 bg-slate-50/50" : ""}
+                      className={cardToneClass}
                     >
                       <div id={`milestone-card-${milestone.key}`}>
                         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -194,7 +199,7 @@ export default function DashboardPage() {
                               variant="ghost" 
                               size="sm"
                               onClick={() => setExpandedKey(isExpanded ? null : milestone.key)}
-                              className="text-slate-500 hover:text-slate-800"
+                              className="text-slate-500 hover:text-slate-800 hover:bg-white/70"
                             >
                               {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                             </Button>
@@ -214,7 +219,7 @@ export default function DashboardPage() {
                             <p className="text-slate-700 leading-relaxed">{description}</p>
 
                             {milestone.requiredDocs && milestone.requiredDocs.length > 0 && (
-                              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                              <div className="bg-white/70 p-4 rounded-xl border border-white/80 backdrop-blur-sm">
                                 <p className="text-sm font-semibold text-slate-800 mb-2">{t(lang, "documentsNeeded")}</p>
                                 <div className="flex flex-wrap gap-2">
                                   {milestone.requiredDocs.map(doc => (
@@ -227,7 +232,7 @@ export default function DashboardPage() {
                             )}
 
                             {tips.length > 0 && (
-                              <div className="bg-emerald-50 text-emerald-900 rounded-xl p-4 border border-emerald-100 space-y-2">
+                              <div className="rounded-xl border border-white/80 bg-white/65 p-4 text-emerald-950 backdrop-blur-sm space-y-2">
                                 <p className="text-sm font-bold flex items-center gap-2">
                                   <AlertCircle className="w-4 h-4 text-emerald-600" /> {t(lang, "tipsLabel")}
                                 </p>

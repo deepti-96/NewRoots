@@ -186,15 +186,38 @@ export default function OnboardingPage() {
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100">
         <h3 className="font-bold text-lg text-slate-900 mb-4">{t(lang, "comfortMode")}</h3>
         <div className="space-y-3">
-          {[
-            { key: "voice", label: t(lang, "voiceReadout"), desc: t(lang, "voiceReadoutSub"), state: voiceLocal, set: setVoiceLocal },
-            { key: "large", label: t(lang, "largeText"), desc: t(lang, "largeTextSub"), state: largeTextLocal, set: setLargeTextLocal },
-          ].map(({ key, label, desc, state: s, set }) => (
+         {[
+            {
+              key: "voice",
+              label: t(lang, "voiceReadout"),
+              desc: t(lang, "voiceReadoutSub"),
+              state: voiceLocal,
+              toggle: () => {
+                const next = !voiceLocal;
+                setVoiceLocal(next);
+                setVoiceEnabled(next);
+                if (next) speakText(t(lang, "chooseLanguage"), lang);
+              },
+            },
+            {
+              key: "large",
+              label: t(lang, "largeText"),
+              desc: t(lang, "largeTextSub"),
+              state: largeTextLocal,
+              toggle: () => {
+                const next = !largeTextLocal;
+                setLargeTextLocal(next);
+                setLargeText(next);
+              },
+            },
+          ].map(({ key, label, desc, state: s, toggle }) => (
             <button
               key={key}
               data-testid={`btn-mode-${key}`}
-              onClick={() => set(!s)}
-              className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${s ? "ring-2 ring-emerald-600 bg-emerald-50 border-emerald-200" : "bg-white border-slate-200 hover:border-slate-300"}`}
+              onClick={toggle}
+              className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
+                s ? "ring-2 ring-emerald-600 bg-emerald-50 border-emerald-200" : "bg-white border-slate-200 hover:border-slate-300"
+              }`}
             >
               <div className="text-left">
                 <div className="text-base font-bold text-slate-900">{label}</div>
