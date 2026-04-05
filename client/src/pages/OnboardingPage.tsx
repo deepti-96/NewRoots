@@ -4,7 +4,6 @@ import { useApp } from "@/App";
 import { t, LANGUAGES, type Language } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { speakText } from "@/lib/voiceUtils";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -72,36 +71,8 @@ export default function OnboardingPage() {
   const [largeTextLocal, setLargeTextLocal] = useState(false);
   const [voiceLocal, setVoiceLocal] = useState(false);
   const [isFinishing, setIsFinishing] = useState(false);
-  const [isFinishing, setIsFinishing] = useState(false);
 
   const lang = language;
-  const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth() + 1;
-  const currentDay = today.getDate();
-  const [selectedYear, selectedMonth, selectedDay] = arrivalDate.split("-").map(Number);
-  const arrivalYearOptions = Array.from({ length: currentYear - 1970 + 1 }, (_, index) => currentYear - index);
-  const arrivalMonthOptions = ARRIVAL_MONTHS.filter((month) =>
-    selectedYear === currentYear ? month.value <= currentMonth : true,
-  );
-  const daysInSelectedMonth = new Date(selectedYear, selectedMonth, 0).getDate();
-  const maxArrivalDay =
-    selectedYear === currentYear && selectedMonth === currentMonth
-      ? Math.min(daysInSelectedMonth, currentDay)
-      : daysInSelectedMonth;
-  const arrivalDayOptions = Array.from({ length: maxArrivalDay }, (_, index) => index + 1);
-
-  function updateArrivalDate(year: number, month: number, day: number) {
-    const safeMonth = year === currentYear ? Math.min(month, currentMonth) : month;
-    const daysInMonth = new Date(year, safeMonth, 0).getDate();
-    const futureDayLimit =
-      year === currentYear && safeMonth === currentMonth
-        ? Math.min(daysInMonth, currentDay)
-        : daysInMonth;
-    const safeDay = Math.min(day, futureDayLimit);
-
-    setArrivalDate(toIsoDate(year, safeMonth, safeDay));
-  }
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth() + 1;
@@ -140,15 +111,8 @@ export default function OnboardingPage() {
       if (!user) {
         navigate("/");
       }
-    if (!user || isFinishing) {
-      if (!user) {
-        navigate("/");
-      }
       return;
     }
-
-    setIsFinishing(true);
-
 
     setIsFinishing(true);
 
